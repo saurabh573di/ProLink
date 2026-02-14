@@ -30,6 +30,10 @@ const handleSignOut=async ()=>{
 }
 
 const handleSearch=async ()=>{
+if(!searchInput.trim()) {
+  setSearchData([])
+  return
+}
 try {
   let result=await axios.get(`${serverUrl}/api/user/search?query=${searchInput}`,{withCredentials:true})
 setSearchData(result.data)
@@ -40,9 +44,10 @@ setSearchData(result.data)
 }
 
 useEffect(()=>{
-
-  handleSearch()
-
+  const delayTimer = setTimeout(() => {
+    handleSearch()
+  }, 300)
+  return () => clearTimeout(delayTimer)
 },[searchInput])
 
 

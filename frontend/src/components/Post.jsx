@@ -75,7 +75,7 @@ socket.off("commentAdded")
 
             <div className='flex justify-center items-start gap-[10px]' onClick={()=>handleGetProfile(author.userName)}>
                 <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center  cursor-pointer' >
-                    <img src={author.profileImage || dp} alt="" className='h-full' />
+                    <img src={author.profileImage || dp} alt="" className='h-full' onError={(e) => e.target.src = dp}/>
                 </div>
                 <div>
                 <div className='text-[22px] font-semibold'>{`${author.firstName} ${author.lastName}` }</div>
@@ -95,7 +95,7 @@ socket.off("commentAdded")
 
          {image && 
          <div className='w-full h-[300px] overflow-hidden flex justify-center rounded-lg'>
-<img src={image} alt="" className='h-full rounded-lg'/>
+<img src={image} alt="" className='h-full rounded-lg' onError={(e) => e.target.style.display = 'none'}/>
 </div>}
 
 <div>

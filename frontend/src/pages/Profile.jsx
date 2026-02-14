@@ -33,7 +33,7 @@ setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData.
                     <img src={profileData.coverImage || ""} alt="" className='w-full'/>
                    </div>
                    <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center absolute top-[65px] left-[35px] cursor-pointer'>
-                        <img src={profileData.profileImage || dp} alt="" className='h-full'/>
+                        <img src={profileData.profileImage || dp} alt="" className='h-full' onError={(e) => e.target.src = dp}/>
                       
                     </div>
                    <div className='mt-[30px] pl-[20px]  font-semibold text-gray-700'>
