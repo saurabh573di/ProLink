@@ -12,7 +12,7 @@ import Post from '../components/Post';
 import ConnectionButton from '../components/ConnectionButton';
 function Profile() {
 
-    let {userData,setuserData,edit,setEdit,postData,setPostData,profileData,setProfileData}=useContext(userDataContext)
+    let {userData,setUserData,edit,setEdit,postData,setPostData,profileData,setProfileData}=useContext(userDataContext)
     let [profilePost,setProfilePost]=useState([])
     
 let {serverUrl}=useContext(authDataContext)
