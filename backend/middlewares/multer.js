@@ -1,15 +1,13 @@
 import multer from "multer"
 
+// Use memory storage for better cloud upload handling
+const storage = multer.memoryStorage()
 
-
-let storage=multer.diskStorage({
-    destination:(req,file,cb)=>{
-        cb(null,"./public")
-    },
-    filename:(req,file,cb)=>{
-        cb(null,file.originalname)
-    }
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
 })
 
-const upload=multer({storage})
 export default upload

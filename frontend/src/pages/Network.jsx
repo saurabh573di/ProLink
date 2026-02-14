@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Nav from '../components/Nav'
 import axios from 'axios'
 import { authDataContext } from '../context/AuthContext'
@@ -8,9 +8,23 @@ import { RxCrossCircled } from "react-icons/rx";
 
 import io from "socket.io-client"
 
-const socket=io(import.meta.env.VITE_API_BASE_URL)
+let socket;
+
 function Network() {
 let {serverUrl}=useContext(authDataContext)
+
+// Initialize socket connection when serverUrl is available
+useEffect(() => {
+  if (serverUrl && !socket) {
+    socket = io(serverUrl);
+  }
+  return () => {
+    if (socket) {
+      socket.disconnect();
+    }
+  };
+}, [serverUrl]);
+
 let [connections,setConnections]=useState([])
     const handleGetRequests=async ()=>{
         try {

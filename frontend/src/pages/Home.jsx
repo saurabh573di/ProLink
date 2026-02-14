@@ -37,13 +37,18 @@ async function handleUploadPost(){
     if(backendImage){
       formdata.append("image",backendImage)
     }
-let result=await axios.post(serverUrl+"/api/post/create",formdata,{withCredentials:true})
+let result=await axios.post(serverUrl+"/api/post/create",formdata,{
+  withCredentials:true,
+  headers:{
+    'Content-Type':'multipart/form-data'
+  }
+})
 console.log(result)
 setPosting(false)
 setUploadPost(false)
   } catch (error) {
     setPosting(false)
-    console.log(error);
+    console.log("Post error:", error.response?.data || error.message);
     
   }
 }

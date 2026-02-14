@@ -7,7 +7,7 @@ export const createPost=async (req,res)=>{
         let {description}=req.body
         let newPost;
     if(req.file){
-        let image=await uploadOnCloudinary(req.file.path)
+        let image=await uploadOnCloudinary(req.file.buffer)
          newPost=await Post.create({
             author:req.userId,
             description,
@@ -22,7 +22,8 @@ export const createPost=async (req,res)=>{
 return res.status(201).json(newPost)
 
     } catch (error) {
-        return res.status(201).json(`create post error ${error}`)
+        console.log("Create post error:", error)
+        return res.status(500).json({message:`create post error ${error.message}`})
     }
 }
 
