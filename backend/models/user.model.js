@@ -40,7 +40,10 @@ const userSchema=new mongoose.Schema({
     userName:{
         type:String,
         required:true,
-        unique:true
+        unique:true,
+        lowercase:true,
+        trim:true,
+        match:/^[a-zA-Z0-9._-]+$/ // Only alphanumeric, dots, dashes, underscores (no spaces)
     },
     email:{
         type:String,

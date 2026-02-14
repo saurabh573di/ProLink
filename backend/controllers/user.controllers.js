@@ -91,22 +91,25 @@ export const updateProfile=async (req,res)=>{
 export const getprofile=async (req,res)=>{
     try {
         let {userName}=req.params
-        let user=await User.findOne({userName}).select("-password")
+        // Normalize username: lowercase and trim
+        const normalizedUserName = userName.toLowerCase().trim()
+        let user=await User.findOne({userName: normalizedUserName}).select("-password")
         if(!user){
-            return res.status(400).json({message:"userName does not exist"})
+            // Use 404 Not Found instead of 400 Bad Request for better HTTP semantics
+            return res.status(404).json({message:"User not found"})
         }
         return res.status(200).json(user)
     } catch (error) {
         console.log(error)
         return res.status(500).json({message:`get profile error ${error}`})
     }
-}
+
 
 export const search=async (req,res)=>{
     try {
         let {query}=req.query
         if(!query || query.trim() === ""){
-return res.status(200).json([])
+            return res.status(200).json([])
         }
         // Use text search for better performance on large datasets
         let users=await User.find(

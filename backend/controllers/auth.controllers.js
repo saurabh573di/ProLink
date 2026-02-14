@@ -37,25 +37,35 @@ import bcrypt from "bcryptjs"
 export const signUp=async (req,res)=>{
     try {
         const {firstName,lastName,userName,email,password}=req.body
+        
+        // Validate userName: no spaces, only alphanumeric, dots, dashes, underscores
+        if(!userName || !/^[a-zA-Z0-9._-]+$/.test(userName)){
+            return res.status(400).json({message:"Username can only contain letters, numbers, dots, dashes, and underscores (no spaces)"})
+        }
+        
+        // Check if email exists
        let existEmail=await User.findOne({email})
        if(existEmail){
         return res.status(400).json({message:"email already exist !"})
        }
-       let existUsername=await User.findOne({userName})
+       
+       // Normalize and check username
+       const normalizedUserName = userName.toLowerCase().trim()
+       let existUsername=await User.findOne({userName: normalizedUserName})
        if(existUsername){
         return res.status(400).json({message:"userName already exist !"})
        }
        if(password.length<8){
         return res.status(400).json({message:"password must be at least 8 characters"})
        }
+       
+       // Use normalized username
+       const newUserData = {firstName, lastName, userName: normalizedUserName, email, password}
       
        let hassedPassword=await bcrypt.hash(password,10)
       
        const user=await User.create({
-        firstName,
-        lastName,
-        userName,
-        email,
+        ...newUserData,
         password:hassedPassword
        })
 

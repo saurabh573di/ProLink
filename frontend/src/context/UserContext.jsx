@@ -68,7 +68,14 @@ const handleGetProfile=async (userName)=>{
     setProfileData(result.data)
     navigate("/profile")
    } catch (error) {
-    console.log(error)
+    // Better error handling: 404 = not found, other errors = server issues
+    if(error?.response?.status === 404) {
+      console.log("User not found")
+      alert("User profile not found. Please check the username.")
+    } else {
+      console.log(error)
+      alert("Error loading profile. Please try again.")
+    }
    }
 }
 
