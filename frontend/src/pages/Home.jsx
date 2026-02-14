@@ -38,6 +38,7 @@ async function handleUploadPost(){
       formdata.append("image",backendImage)
     }
 let result=await axios.post(serverUrl+"/api/post/create",formdata,{
+  withCredentials:true,
   headers:{
     'Content-Type':'multipart/form-data'
   }
@@ -53,7 +54,7 @@ setUploadPost(false)
 }
 const handleSuggestedUsers=async ()=>{
   try {
-    let result=await axios.get(serverUrl+"/api/user/suggestedusers")
+    let result=await axios.get(serverUrl+"/api/user/suggestedusers",{withCredentials:true})
     console.log(result.data)
     setSuggestedUser(result.data)
   } catch (error) {

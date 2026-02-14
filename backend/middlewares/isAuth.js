@@ -3,16 +3,7 @@ import dotenv from "dotenv"
 dotenv.config()
 const isAuth=async (req,res,next)=>{
     try {
-        // Try to get token from Authorization header first (Bearer token)
-        const authHeader = req.headers.authorization
-        let token = null
-        
-        if(authHeader && authHeader.startsWith("Bearer ")){
-            token = authHeader.slice(7) // Remove "Bearer " prefix
-        } else {
-            // Fallback to cookies for backward compatibility
-            token = req.cookies.token
-        }
+        let {token}=req.cookies
 
         if(!token){
             return res.status(401).json({message:"user doesn't have token"})

@@ -6,7 +6,7 @@ import axios from "axios"
 import { userDataContext } from '../context/UserContext'
 function Signup() {
   let [show,setShow]=useState(false)
-  let {serverUrl, saveToken}=useContext(authDataContext)
+  let {serverUrl}=useContext(authDataContext)
   let {userData,setUserData}=useContext(userDataContext)
   let navigate=useNavigate()
   let [firstName,setFirstName]=useState("")
@@ -27,12 +27,8 @@ lastName,
 userName,
 email,
 password
-      })
+      },{withCredentials:true})
       console.log(result)
-      // Save token from response
-      if(result.data.token){
-        saveToken(result.data.token)
-      }
       setUserData(result.data)
       navigate("/")
       setErr("")

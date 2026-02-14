@@ -30,7 +30,7 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
   }, [serverUrl]);
     const handleLike=async ()=>{
       try {
-        let result=await axios.get(serverUrl+`/api/post/like/${id}`)
+        let result=await axios.get(serverUrl+`/api/post/like/${id}`,{withCredentials:true})
        setLikes(result.data.like)
       } catch (error) {
         console.log(error)
@@ -41,7 +41,7 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
         try {
           let result=await axios.post(serverUrl+`/api/post/comment/${id}`,{
             content:commentContent
-          })
+          },{withCredentials:true})
           setComments(result.data.comment)
         setCommentContent("")
         } catch (error) {

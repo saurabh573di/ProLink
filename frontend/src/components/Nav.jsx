@@ -19,7 +19,7 @@ let [searchInput,setSearchInput]=useState("")
 let [searchData,setSearchData]=useState([])
 const handleSignOut=async ()=>{
     try {
-        let result =await axios.get(serverUrl+"/api/auth/logout")
+        let result =await axios.get(serverUrl+"/api/auth/logout",{withCredentials:true})
         setUserData(null)
         navigate("/login")
         console.log(result);
@@ -31,7 +31,7 @@ const handleSignOut=async ()=>{
 
 const handleSearch=async ()=>{
 try {
-  let result=await axios.get(`${serverUrl}/api/user/search?query=${searchInput}`)
+  let result=await axios.get(`${serverUrl}/api/user/search?query=${searchInput}`,{withCredentials:true})
 setSearchData(result.data)
 } catch (error) {
   setSearchData([])

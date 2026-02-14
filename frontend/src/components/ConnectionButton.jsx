@@ -21,7 +21,7 @@ useEffect(() => {
 }, [serverUrl]);
     const handleSendConnection=async ()=>{
         try {
-            let result=await axios.post(`${serverUrl}/api/connection/send/${userId}`,{})
+            let result=await axios.post(`${serverUrl}/api/connection/send/${userId}`,{},{withCredentials:true})
             console.log(result)
             
         } catch (error) {
@@ -30,7 +30,7 @@ useEffect(() => {
     }
     const handleRemoveConnection=async ()=>{
         try {
-            let result=await axios.delete(`${serverUrl}/api/connection/remove/${userId}`)
+            let result=await axios.delete(`${serverUrl}/api/connection/remove/${userId}`,{withCredentials:true})
             console.log(result)
         } catch (error) {
             console.log(error)
@@ -38,7 +38,7 @@ useEffect(() => {
     }
     const handleGetStatus=async ()=>{
         try {
-            let result=await axios.get(`${serverUrl}/api/connection/getStatus/${userId}`)
+            let result=await axios.get(`${serverUrl}/api/connection/getStatus/${userId}`,{withCredentials:true})
             console.log(result)
             setStatus(result.data.status)
             
