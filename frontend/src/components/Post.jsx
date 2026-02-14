@@ -78,7 +78,7 @@ socket.off("commentAdded")
 
 
     return (
-        <div className="w-full min-h-[200px] flex flex-col gap-[10px] bg-white rounded-lg shadow-lg p-[15px] md:p-[20px]">
+        <div className="w-full min-h-[200px] flex flex-col gap-[15px] bg-white rounded-xl shadow-lg hover:shadow-xl p-[15px] md:p-[20px] transition-shadow">
 
           <div className='flex justify-between items-center gap-[10px]'>
 
@@ -131,19 +131,19 @@ socket.off("commentAdded")
 {/* Action buttons - responsive with wrapping for mobile */}
 <div className='flex flex-wrap justify-start items-center w-full p-[12px] md:p-[20px] gap-[15px] md:gap-[20px]'>
   {!likes.some(id => id.toString() === userData._id.toString()) &&  
-    <div className='flex justify-center items-center gap-[5px] cursor-pointer hover:text-[#2dc0ff] transition-colors text-[14px] md:text-[16px]' onClick={handleLike}>
+    <div className='flex justify-center items-center gap-[5px] cursor-pointer hover:text-[#2dc0ff] hover:bg-gray-100 px-[8px] py-[6px] rounded-lg transition-colors text-[14px] md:text-[16px]' onClick={handleLike}>
       <BiLike className='w-[20px] h-[20px] md:w-[24px] md:h-[24px]'/>
       <span>Like</span>
     </div>
   }
   {likes.some(id => id.toString() === userData._id.toString()) &&  
-    <div className='flex justify-center items-center gap-[5px] cursor-pointer text-[14px] md:text-[16px]' onClick={handleLike}>
+    <div className='flex justify-center items-center gap-[5px] cursor-pointer px-[8px] py-[6px] rounded-lg text-[14px] md:text-[16px] hover:bg-blue-50 transition-colors' onClick={handleLike}>
       <BiSolidLike className='w-[20px] h-[20px] md:w-[24px] md:h-[24px] text-[#07a4ff]'/>
       <span className="text-[#07a4ff] font-semibold">Liked</span>
     </div>
   }
 
-  <div className='flex justify-center items-center gap-[5px] cursor-pointer hover:text-[#2dc0ff] transition-colors text-[14px] md:text-[16px]' onClick={()=>setShowComment(prev=>!prev)}>
+  <div className='flex justify-center items-center gap-[5px] cursor-pointer hover:text-[#2dc0ff] hover:bg-gray-100 px-[8px] py-[6px] rounded-lg transition-colors text-[14px] md:text-[16px]' onClick={()=>setShowComment(prev=>!prev)}>
     <FaRegCommentDots className='w-[20px] h-[20px] md:w-[24px] md:h-[24px]'/>
     <span>Comment</span>
   </div>

@@ -87,25 +87,25 @@ getPost()
        {edit && <EditProfile/>}
       <Nav/>
      
-       <div className='w-full lg:w-[25%] min-h-[200px] bg-[white] shadow-lg rounded-lg p-[10px] relative '>
-       <div className='w-[100%] h-[100px] bg-gray-400 rounded overflow-hidden flex items-center justify-center relative cursor-pointer' onClick={()=>setEdit(true)}>
-        <img src={userData.coverImage || ""} alt="" className='w-full'/>
-        <FiCamera className='absolute right-[20px] top-[20px] w-[25px] h-[25px] text-white cursor-pointer'/>
+       <div className='w-full lg:w-[25%] min-h-[200px] bg-[white] shadow-lg rounded-xl p-[10px] relative hover:shadow-xl transition-shadow'>
+       <div className='w-[100%] h-[100px] bg-gray-400 rounded-t-lg overflow-hidden flex items-center justify-center relative cursor-pointer hover:brightness-90 transition-all' onClick={()=>setEdit(true)}>
+        <img src={userData.coverImage || ""} alt="" className='w-full object-cover'/>
+        <FiCamera className='absolute right-[20px] top-[20px] w-[25px] h-[25px] text-white cursor-pointer hover:scale-110 transition-transform'/>
        </div>
-       <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center absolute top-[65px] left-[35px] cursor-pointer' onClick={()=>setEdit(true)}>
-            <img src={userData.profileImage || dp} alt="" className='h-full' loading="lazy" onError={(e) => e.target.src = dp}/>
+       <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center absolute top-[65px] left-[35px] cursor-pointer hover:ring-4 ring-blue-300 transition-all' onClick={()=>setEdit(true)}>
+            <img src={userData.profileImage || dp} alt="" className='h-full object-cover' loading="lazy" onError={(e) => e.target.src = dp}/>
           
         </div>
-        <div className='w-[20px] h-[20px] bg-[#17c1ff] absolute top-[105px] left-[90px] rounded-full flex justify-center items-center cursor-pointer'>
+        <div className='w-[20px] h-[20px] bg-[#17c1ff] absolute top-[105px] left-[90px] rounded-full flex justify-center items-center cursor-pointer hover:bg-[#0fa3ff] transition-colors'>
             <FiPlus className='text-white'/>
             </div>
 
-       <div className='mt-[30px] pl-[20px]  font-semibold text-gray-700'>
+       <div className='mt-[30px] pl-[20px] font-semibold text-gray-700'>
         <div className='text-[22px]'>{`${userData.firstName} ${userData.lastName}`}</div>
         <div className='text-[18px] font-semibold text-gray-600'>{userData.headline || ""}</div>
-        <div className='text-[16px]text-gray-500'>{userData.location}</div>
+        <div className='text-[16px] text-gray-500'>{userData.location}</div>
        </div>
-       <button className='w-[100%] h-[40px] my-[20px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] flex items-center justify-center gap-[10px]' onClick={()=>setEdit(true)}>Edit Profile <HiPencil /></button>
+       <button className='w-[100%] h-[40px] my-[20px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] md:text-[16px] font-semibold flex items-center justify-center gap-[10px] hover:bg-[#effbff] transition-colors' onClick={()=>setEdit(true)}>Edit Profile <HiPencil /></button>
        </div>
        {uploadPost &&  <div className='w-full h-full bg-black fixed top-0 z-[100] left-0 opacity-[0.6]'>
        </div> }
@@ -144,12 +144,12 @@ getPost()
      
  
 
-       <div className=' w-full lg:w-[50%] min-h-[200px] bg-[#f0efe7] flex flex-col gap-[20px]'>
-        <div className='w-full h-[120px] bg-white shadow-lg rounded-lg flex items-center p-[20px]  justify-center gap-[10px]'>
-        <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center  cursor-pointer' >
-            <img src={userData.profileImage || dp} alt="" className='h-full'/>
+       <div className=' w-full lg:w-[50%] min-h-[200px] bg-[#f0efe7] flex flex-col gap-[30px]'>
+        <div className='w-full h-[120px] bg-white shadow-lg rounded-xl flex items-center p-[20px] justify-center gap-[15px] hover:shadow-xl transition-shadow'>
+        <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center cursor-pointer flex-shrink-0' >
+            <img src={userData.profileImage || dp} alt="" className='h-full object-cover'/>
         </div>
-        <button className='w-[80%] h-[60px] border-2 rounded-full border-gray-500 flex items-center justify-start px-[20px] hover:bg-gray-200' onClick={()=>setUploadPost(true)}>start a post</button>
+        <button className='w-[80%] h-[60px] border-2 rounded-full border-gray-400 flex items-center justify-start px-[20px] hover:border-gray-600 hover:bg-gray-50 transition-all text-gray-600' onClick={()=>setUploadPost(true)}>start a post</button>
         </div>
 
         {postData.map((post,index)=>(
@@ -158,22 +158,22 @@ getPost()
 
        </div>
 
-       <div className='w-full lg:w-[25%] min-h-[200px] bg-[white] shadow-lg hidden lg:flex flex-col p-[20px]'>
-        <h1 className='text-[20px] text-gray-600 font-semibold'>Suggested Users</h1>
-         {suggestedUser.length>0 && <div className='flex flex-col gap-[10px]'>
+       <div className='w-full lg:w-[25%] min-h-[200px] bg-[white] shadow-lg hidden lg:flex flex-col p-[20px] rounded-xl hover:shadow-xl transition-shadow'>
+        <h1 className='text-[20px] text-gray-600 font-semibold mb-[15px]'>Suggested Users</h1>
+         {suggestedUser.length>0 && <div className='flex flex-col gap-[15px]'>
 {suggestedUser.map((su)=>(
-  <div className='flex items-center gap-[10px] mt-[10px] cursor-pointer hover:bg-gray-200 rounded-lg p-[5px]' onClick={()=>handleGetProfile(su.userName)}>
-  <div className='w-[40px] h-[40px] rounded-full overflow-hidden'>
-            <img src={su.profileImage || dp} alt="" className='w-full h-full'/>
+  <div className='flex items-center gap-[12px] mt-[5px] cursor-pointer hover:bg-gray-50 rounded-lg p-[10px] transition-colors active:bg-gray-100' onClick={()=>handleGetProfile(su.userName)}>
+  <div className='w-[40px] h-[40px] rounded-full overflow-hidden flex-shrink-0'>
+            <img src={su.profileImage || dp} alt="" className='w-full h-full object-cover'/>
         </div>
-        <div>
-        <div className='text-[19px] font-semibold text-gray-700'>{`${su.firstName} ${su.lastName}`}</div>
-        <div className='text-[12px] font-semibold text-gray-700'>{su.headline}</div>
+        <div className='flex-1 min-w-0'>
+        <div className='text-[15px] font-semibold text-gray-700 truncate'>{`${su.firstName} ${su.lastName}`}</div>
+        <div className='text-[12px] text-gray-600 line-clamp-1'>{su.headline}</div>
         </div>
   </div>
 ))}
           </div>}
-          {suggestedUser.length==0 && <div>
+          {suggestedUser.length==0 && <div className='text-gray-500 text-center py-[20px]'>
           No Suggested Users
           </div>}
        </div>
