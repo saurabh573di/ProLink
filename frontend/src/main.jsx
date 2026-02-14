@@ -13,7 +13,7 @@ const LoadingFallback = () => (
   </div>
 )
 
-creatRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root')).render(
  <BrowserRouter>
  <AuthContext>
 <UserContext>
