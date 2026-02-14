@@ -10,6 +10,8 @@ import connectionRouter from "./routes/connection.routes.js";
 import http from "http";
 import { Server } from "socket.io";
 import notificationRouter from "./routes/notification.routes.js";
+import compression from "compression";
+import helmet from "helmet";
 
 dotenv.config();
 
@@ -31,6 +33,8 @@ export const io = new Server(server, {
 });
 
 // ================== MIDDLEWARE ==================
+app.use(helmet());
+app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({

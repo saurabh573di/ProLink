@@ -66,19 +66,33 @@ export const search=async (req,res)=>{
         if(!query || query.trim() === ""){
 return res.status(200).json([])
         }
-        let users=await User.find({
-            $or:[
-                {firstName:{$regex:query,$options:"i"}},
-                {lastName:{$regex:query,$options:"i"}},
-                {userName:{$regex:query,$options:"i"}},
-                {skills:{$regex:query,$options:"i"}}
-            ]
-        })
-
+        // Use text search for better performance on large datasets
+        let users=await User.find(
+            { $text: { $search: query } },
+            { score: { $meta: "textScore" } }
+        )
+        .select("firstName lastName userName profileImage headline skills")
+        .sort({ score: { $meta: "textScore" } })
+        .limit(20)
+        
         return res.status(200).json(users)
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({message:`search error ${error}`})
+        // Fallback to regex if text search fails
+        try {
+            let {query}=req.query
+            let users=await User.find({
+                $or:[
+                    {firstName:{$regex:query,$options:"i"}},
+                    {lastName:{$regex:query,$options:"i"}},
+                    {userName:{$regex:query,$options:"i"}},
+                    {skills:{$regex:query,$options:"i"}}
+                ]
+            }).select("firstName lastName userName profileImage headline skills").limit(20)
+            return res.status(200).json(users)
+        } catch (fallbackError) {
+            console.log(fallbackError)
+            return res.status(500).json({message:`search error ${fallbackError}`})
+        }
     }
 }
 

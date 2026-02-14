@@ -30,11 +30,25 @@ return res.status(201).json(newPost)
 
 export const getPost=async (req,res)=>{
     try {
+        const page = req.query.page ? parseInt(req.query.page) : 0
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10
+        const skip = page * limit
+
         const post=await Post.find()
         .populate("author","firstName lastName profileImage headline userName")
         .populate("comment.user","firstName lastName profileImage headline")
         .sort({createdAt:-1})
-        return res.status(200).json(post)
+        .limit(limit)
+        .skip(skip)
+        
+        const total = await Post.countDocuments()
+        
+        return res.status(200).json({
+            posts: post,
+            total,
+            page,
+            pages: Math.ceil(total / limit)
+        })
     } catch (error) {
         return res.status(500).json({message:"getPost error"})
     }

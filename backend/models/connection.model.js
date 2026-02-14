@@ -17,5 +17,9 @@ let connectionSchema=new mongoose.Schema({
 
 },{timestamps:true})
 
+// Add index for performance
+connectionSchema.index({ sender: 1, receiver: 1 })
+connectionSchema.index({ receiver: 1, status: 1 })
+
 const Connection=mongoose.model("Connection",connectionSchema)
 export default Connection

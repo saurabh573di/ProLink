@@ -32,5 +32,9 @@ comment:[
 
 },{timestamps:true})
 
+// Add indexes for performance
+postSchema.index({ author: 1 })
+postSchema.index({ createdAt: -1 })
+
 const Post=mongoose.model("Post",postSchema)
 export default Post

@@ -81,7 +81,7 @@ getPost()
         <FiCamera className='absolute right-[20px] top-[20px] w-[25px] h-[25px] text-white cursor-pointer'/>
        </div>
        <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center absolute top-[65px] left-[35px] cursor-pointer' onClick={()=>setEdit(true)}>
-            <img src={userData.profileImage || dp} alt="" className='h-full' onError={(e) => e.target.src = dp}/>
+            <img src={userData.profileImage || dp} alt="" className='h-full' loading="lazy" onError={(e) => e.target.src = dp}/>
           
         </div>
         <div className='w-[20px] h-[20px] bg-[#17c1ff] absolute top-[105px] left-[90px] rounded-full flex justify-center items-center cursor-pointer'>
@@ -103,7 +103,7 @@ getPost()
          <div className='absolute top-[20px] right-[20px] cursor-pointer  '><RxCross1 className='w-[25px] cursor-pointer h-[25px] text-gray-800 font-bold ' onClick={()=>setUploadPost(false)}/></div>
          <div className='flex justify-start items-center gap-[10px]'>
          <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center cursor-pointer'>
-            <img src={userData.profileImage || dp} alt="" className='h-full' onError={(e) => e.target.src = dp}/>
+            <img src={userData.profileImage || dp} alt="" className='h-full' loading="lazy" onError={(e) => e.target.src = dp}/>
         </div>
         <div className='text-[22px]'>{`${userData.firstName} ${userData.lastName}`}</div>
         </div>
