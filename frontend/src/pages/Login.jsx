@@ -6,7 +6,7 @@ import axios from "axios"
 import { userDataContext } from '../context/UserContext'
 function Login() {
   let [show,setShow]=useState(false)
-  let {serverUrl}=useContext(authDataContext)
+  let {serverUrl, saveToken}=useContext(authDataContext)
   let {userData,setUserData}=useContext(userDataContext)
   let navigate=useNavigate()
   let [email,setEmail]=useState("")
@@ -21,7 +21,11 @@ function Login() {
       let result = await axios.post(serverUrl+"/api/auth/login",{
 email,
 password
-      },{withCredentials:true})
+      })
+      // Save token from response
+      if(result.data.token){
+        saveToken(result.data.token)
+      }
       setUserData(result.data)
       navigate("/")
       setErr("")

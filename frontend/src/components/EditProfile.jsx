@@ -127,7 +127,7 @@ const handleSaveProfile=async ()=>{
       formdata.append("coverImage",backendCoverImage)
     }
 
-    let result=await axios.put(serverUrl+"/api/user/updateprofile",formdata,{withCredentials:true})
+    let result=await axios.put(serverUrl+"/api/user/updateprofile",formdata)
     setUserData(result.data)
     setSaving(false)
     setEdit(false)

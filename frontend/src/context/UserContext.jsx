@@ -13,7 +13,7 @@ let [profileData,setProfileData]=useState([])
 let navigate=useNavigate()
 const getCurrentUser=async ()=>{
     try {
-        let result=await axios.get(serverUrl+"/api/user/currentuser",{withCredentials:true})
+        let result=await axios.get(serverUrl+"/api/user/currentuser")
         setUserData(result.data)
         return
     } catch (error) {
@@ -24,9 +24,7 @@ const getCurrentUser=async ()=>{
 
 const getPost=async ()=>{
   try {
-    let result=await axios.get(serverUrl+"/api/post/getpost",{
-      withCredentials:true
-    })
+    let result=await axios.get(serverUrl+"/api/post/getpost")
     console.log(result)
     setPostData(result.data)
    
@@ -37,9 +35,7 @@ const getPost=async ()=>{
 
 const handleGetProfile=async (userName)=>{
    try {
-    let result=await axios.get(serverUrl+`/api/user/profile/${userName}`,{
-      withCredentials:true
-    })
+    let result=await axios.get(serverUrl+`/api/user/profile/${userName}`)
     setProfileData(result.data)
     navigate("/profile")
    } catch (error) {

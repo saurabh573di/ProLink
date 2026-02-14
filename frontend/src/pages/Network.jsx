@@ -28,7 +28,7 @@ useEffect(() => {
 let [connections,setConnections]=useState([])
     const handleGetRequests=async ()=>{
         try {
-            let result=await axios.get(`${serverUrl}/api/connection/requests`,{withCredentials:true})
+            let result=await axios.get(`${serverUrl}/api/connection/requests`)
             setConnections(result.data)
         } catch (error) {
            console.log(error) 
@@ -36,7 +36,7 @@ let [connections,setConnections]=useState([])
     }
     const handleAcceptConnection=async (requestId)=>{
 try {
-    let result = await axios.put(`${serverUrl}/api/connection/accept/${requestId}`,{},{withCredentials:true})
+    let result = await axios.put(`${serverUrl}/api/connection/accept/${requestId}`,{})
     setConnections(connections.filter((con)=>con._id!=requestId))
 } catch (error) {
     console.log(error)
@@ -44,7 +44,7 @@ try {
     }
     const handleRejectConnection=async (requestId)=>{
         try {
-            let result = await axios.put(`${serverUrl}/api/connection/reject/${requestId}`,{},{withCredentials:true})
+            let result = await axios.put(`${serverUrl}/api/connection/reject/${requestId}`,{})
             setConnections(connections.filter((con)=>con._id===requestId))
         } catch (error) {
             console.log(error)
