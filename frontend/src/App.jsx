@@ -1,12 +1,14 @@
-import React, { useContext } from 'react'
+import React, { useContext, lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import Home from './pages/Home'
-import Signup from './pages/Signup'
-import Login from './pages/Login'
+// Lazy load pages for code splitting - improves initial page load performance
+const Home = lazy(() => import('./pages/Home'))
+const Signup = lazy(() => import('./pages/Signup'))
+const Login = lazy(() => import('./pages/Login'))
+const Network = lazy(() => import('./pages/Network'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Notification = lazy(() => import('./pages/Notification'))
+
 import { userDataContext } from './context/UserContext'
-import Network from './pages/Network'
-import Profile from './pages/Profile'
-import Notification from './pages/Notification'
 
 function App() {
   let {userData}=useContext(userDataContext)

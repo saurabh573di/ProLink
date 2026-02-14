@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, memo, useCallback } from 'react'
 import dp from "../assets/dp.webp"
 import moment from "moment"
 import { FaRegCommentDots } from "react-icons/fa";
@@ -20,15 +20,18 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
   let [comments,setComments]=useState(comment)
   let [showComment,setShowComment]=useState(false)
 
-  const handleLike=async ()=>{
+  // PERFORMANCE: useCallback prevents function recreation on every render
+  // This prevents unnecessary re-renders of child components
+  const handleLike=useCallback(async ()=>{
     try {
       let result=await axios.get(serverUrl+`/api/post/like/${id}`,{withCredentials:true})
      setLikes(result.data.like)
     } catch (error) {
       console.log(error)
     }
-  }
-  const handleComment=async (e)=>{
+  }, [serverUrl, id])
+  
+  const handleComment=useCallback(async (e)=>{
      e.preventDefault()
       try {
         let result=await axios.post(serverUrl+`/api/post/comment/${id}`,{
@@ -39,9 +42,11 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
       } catch (error) {
         console.log(error)
       }
-    }
+    }, [serverUrl, id, commentContent])
 
       useEffect(()=>{
+        // PERFORMANCE: Socket listeners for real-time updates
+        // Properly cleanup event listeners to prevent memory leaks
         if(!socket) return;
         socket.on("likeUpdated",({postId,likes})=>{
           if(postId==id){
@@ -55,6 +60,7 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
         })
 
         return ()=>{
+          // IMPORTANT: Clean up event listeners to prevent duplicate listeners on re-renders
 if(socket){
 socket.off("likeUpdated")
 socket.off("commentAdded")
@@ -151,4 +157,4 @@ socket.off("commentAdded")
     )
 }
 
-export default Post
+export default memo(Post)

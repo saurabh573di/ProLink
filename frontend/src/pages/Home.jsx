@@ -23,10 +23,19 @@ let image=useRef()
 let [posting,setPosting]=useState(false)
 let [suggestedUser,setSuggestedUser]=useState([])
 function handleImage(e){
-let file=e.target.files[0]
-setBackendImage(file)
-setFrontendImage(URL.createObjectURL(file))
-
+  let file=e.target.files[0]
+  
+  // PERFORMANCE: Validate file size to avoid large uploads that strain network
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
+  if(file && file.size > MAX_FILE_SIZE) {
+    alert('File size exceeds 5MB. Please choose a smaller file.');
+    return;
+  }
+  
+  setBackendImage(file)
+  // NOTE: Object URLs should be revoked after use to free memory
+  // Consider adding cleanup in useEffect
+  setFrontendImage(URL.createObjectURL(file))
 }
 
 async function handleUploadPost(){

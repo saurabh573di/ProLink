@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, memo, useCallback } from 'react'
 import logo2 from "../assets/logo2.png"
 import { IoSearchSharp } from "react-icons/io5";
 import { TiHome } from "react-icons/ti";
@@ -22,33 +22,36 @@ const handleSignOut=async ()=>{
         let result =await axios.get(serverUrl+"/api/auth/logout",{withCredentials:true})
         setUserData(null)
         navigate("/login")
-        console.log(result);
       
     } catch (error) {
         console.log(error);
     }
 }
 
-const handleSearch=async ()=>{
-if(!searchInput.trim()) {
-  setSearchData([])
-  return
-}
-try {
-  let result=await axios.get(`${serverUrl}/api/user/search?query=${searchInput}`,{withCredentials:true})
-setSearchData(result.data)
-} catch (error) {
-  setSearchData([])
-  console.log(error)
-}
-}
+// PERFORMANCE: useCallback prevents search function recreation on every render
+// This is important since it's used in useEffect dependency array
+const handleSearch=useCallback(async ()=>{
+  if(!searchInput.trim()) {
+    setSearchData([])
+    return
+  }
+  try {
+    let result=await axios.get(`${serverUrl}/api/user/search?query=${searchInput}`,{withCredentials:true})
+    setSearchData(result.data)
+  } catch (error) {
+    setSearchData([])
+    console.log(error)
+  }
+}, [searchInput, serverUrl])
 
 useEffect(()=>{
+  // PERFORMANCE: Debounce search requests to reduce API calls
+  // 300ms delay prevents firing search on every keystroke
   const delayTimer = setTimeout(() => {
     handleSearch()
   }, 300)
   return () => clearTimeout(delayTimer)
-},[searchInput])
+},[searchInput, handleSearch])
 
 
   return (
@@ -122,4 +125,4 @@ useEffect(()=>{
   )
 }
 
-export default Nav
+export default memo(Nav)
