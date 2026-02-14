@@ -91,9 +91,11 @@ export const updateProfile=async (req,res)=>{
 export const getprofile=async (req,res)=>{
     try {
         let {userName}=req.params
-        // Normalize username: lowercase and trim
-        const normalizedUserName = userName.toLowerCase().trim()
-        let user=await User.findOne({userName: normalizedUserName}).select("-password")
+        // Case-insensitive search using regex to handle existing users with spaces (e.g. "Mobile D")
+        // This regex escapes special characters and performs case-insensitive match
+        let user=await User.findOne({
+            userName: new RegExp('^' + userName.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i')
+        }).select("-password")
         if(!user){
             // Use 404 Not Found instead of 400 Bad Request for better HTTP semantics
             return res.status(404).json({message:"User not found"})
