@@ -37,10 +37,13 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
         let result=await axios.post(serverUrl+`/api/post/comment/${id}`,{
           content:commentContent
         },{withCredentials:true})
-        setComments(result.data.comment)
+        // IMPORTANT: Ensure comments is always an array
+        setComments(Array.isArray(result.data.comment) ? result.data.comment : result.data?.comment || [])
       setCommentContent("")
       } catch (error) {
         console.log(error)
+        // CRITICAL: Reset to empty array on error
+        setComments([])
       }
     }, [serverUrl, id, commentContent])
 

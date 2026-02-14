@@ -37,7 +37,8 @@ const handleSearch=useCallback(async ()=>{
   }
   try {
     let result=await axios.get(`${serverUrl}/api/user/search?query=${searchInput}`,{withCredentials:true})
-    setSearchData(result.data)
+    // IMPORTANT: Ensure searchData is always an array to prevent ".map is not a function" errors
+    setSearchData(Array.isArray(result.data) ? result.data : result.data?.users || [])
   } catch (error) {
     setSearchData([])
     console.log(error)

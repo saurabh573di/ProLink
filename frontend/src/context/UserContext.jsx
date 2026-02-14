@@ -39,10 +39,14 @@ const getPost=async ()=>{
       withCredentials:true
     })
     console.log(result)
-    setPostData(result.data)
+    // IMPORTANT: Ensure postData is always an array to prevent ".map is not a function" errors
+    // If API returns { posts: [] }, extract the posts array
+    setPostData(Array.isArray(result.data) ? result.data : result.data?.posts || [])
    
   } catch (error) {
     console.log(error)
+    // CRITICAL: Reset to empty array on error to prevent crashes
+    setPostData([])
   }
 }
 

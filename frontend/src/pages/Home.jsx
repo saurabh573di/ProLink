@@ -60,9 +60,12 @@ const handleSuggestedUsers=async ()=>{
   try {
     let result=await axios.get(serverUrl+"/api/user/suggestedusers",{withCredentials:true})
     console.log(result.data)
-    setSuggestedUser(result.data)
+    // IMPORTANT: Ensure suggestedUser is always an array to prevent ".map is not a function" errors
+    setSuggestedUser(Array.isArray(result.data) ? result.data : result.data?.users || [])
   } catch (error) {
     console.log(error)
+    // CRITICAL: Reset to empty array on error to prevent crashes
+    setSuggestedUser([])
   }
 }
 
