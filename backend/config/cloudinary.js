@@ -1,3 +1,25 @@
+/*
+  config/cloudinary.js - Image Upload to Cloudinary
+  =================================================================================
+  PURPOSE:
+  - Upload images (profile, cover, posts) to Cloudinary CDN
+  - Supports both file paths (disk storage) and buffers (memory storage)
+  
+  EXPORTED FUNCTION:
+  - uploadOnCloudinary(filePathOrBuffer): Uploads file and returns secure URL
+  
+  FEATURES:
+  - Handles buffers from memory storage using streamifier
+  - Handles file paths by uploading and then deleting local file
+  - Returns Cloudinary secure_url for storing in database
+  
+  IMPORTANT:
+  - Configure credentials from process.env (CLOUDINARY_CLOUD_NAME, API_KEY, API_SECRET)
+  - Called from post, user profile controllers when images are uploaded
+  - Throws error if upload fails; caller should handle gracefully
+  - Always returns null if no file is provided
+=================================================================================
+*/
 import { v2 as cloudinary } from 'cloudinary';
 import fs from "fs"
 import streamifier from 'streamifier'

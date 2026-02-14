@@ -1,3 +1,9 @@
+/*
+  Login.jsx
+  - Authentication page for existing users to sign in.
+  - Uses `authDataContext` for server URL and `userDataContext` to store logged-in user info.
+  - On success: updates global user state and navigates to the home feed.
+*/
 import React, { useContext, useState } from 'react'
 import logo from "../assets/logo.svg"
 import {useNavigate} from "react-router-dom"
@@ -29,7 +35,8 @@ password
       setEmail("")
       setPassword("")
     } catch (error) {
-      setErr(error.response.data.message)
+      // Better error handling: ensure error response shape exists
+      setErr(error?.response?.data?.message || "Login failed")
       setLoading(false)
     }
   }

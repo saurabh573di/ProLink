@@ -1,3 +1,10 @@
+/*
+    ConnectionButton.jsx
+    - Small component that renders the connection action button for a profile.
+    - Behavior depends on `status` returned by the server: e.g. "connect", "pending",
+        "received", "disconnect". Button triggers send/remove requests or navigates to requests.
+    - Listens to socket `statusUpdate` events to keep the label in sync in real-time.
+*/
 import React, { useContext, useEffect, useState } from 'react'
 import { authDataContext } from '../context/AuthContext'
 import axios from 'axios'
@@ -42,11 +49,12 @@ useEffect(()=>{
     socket.emit("register",userData._id)
     handleGetStatus()
 
-    socket.on("statusUpdate",({updatedUserId,newStatus})=>{
-if(updatedUserId.toString()===userId.toString()){
-    setStatus(newStatus)
-}
-    })
+        socket.on("statusUpdate",({updatedUserId,newStatus})=>{
+            // Only update if the update concerns the currently viewed user
+            if(updatedUserId.toString()===userId.toString()){
+                setStatus(newStatus)
+            }
+        })
 
     return ()=>{
         if(socket) socket.off("statusUpdate")
@@ -55,18 +63,19 @@ if(updatedUserId.toString()===userId.toString()){
 },[userId,socket])
 
 const handleClick=async ()=>{
-    if(status=="disconnect"){
-      await handleRemoveConnection()
-    }else if(status=="received"){
-        navigate("/network")
-    }else{
-await handleSendConnection()
-    }
+        // Use strict comparisons for predictable behavior
+        if(status === "disconnect"){
+            await handleRemoveConnection()
+        } else if(status === "received"){
+                navigate("/network")
+        } else {
+            await handleSendConnection()
+        }
 }
 
-  return (
-    <button className='min-w-[110px] h-[40px] md:min-w-[120px] md:h-[44px] px-[15px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] md:text-[16px] font-semibold hover:bg-[#2dc0ff] hover:text-white transition-all active:scale-95 touch-manipulation' onClick={handleClick} disabled={status=="pending"}>{status}</button>
-  )
+    return (
+        <button className='min-w-[110px] h-[40px] md:min-w-[120px] md:h-[44px] px-[15px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] md:text-[16px] font-semibold hover:bg-[#2dc0ff] hover:text-white transition-all active:scale-95 touch-manipulation' onClick={handleClick} disabled={status === "pending"}>{status}</button>
+    )
 }
 
 export default ConnectionButton

@@ -1,3 +1,13 @@
+/*
+  Home.jsx
+  - Main feed page that displays the user's timeline and allows creating posts.
+  - Responsibilities:
+    * Fetch and render posts through `userDataContext`.
+    * Provide UI for creating a post (text + optional image).
+    * Show a compact profile card and suggested users.
+  Notes:
+    - Keep side-effects in `useEffect` hooks; revoke object URLs when no longer used.
+*/
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import Nav from '../components/Nav'
 import dp from "../assets/dp.webp"

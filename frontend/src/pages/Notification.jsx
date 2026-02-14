@@ -1,3 +1,8 @@
+/*
+    Notification.jsx
+    - Shows user notifications (likes, comments, connection requests).
+    - Provides helpers to delete single notifications or clear all.
+*/
 import React, { useContext, useEffect, useState } from 'react'
 import Nav from '../components/Nav'
 import { authDataContext } from '../context/AuthContext'
@@ -35,13 +40,14 @@ const handleClearAllNotification=async ()=>{
     }
 }
 const handleMessage=(type)=>{
-if(type=="like"){
-    return "liked your post"
-}else if(type=="comment"){
-    return "commented on your post"
-}else{
-    return "Accept your connection"
-}
+    // Map notification type to a short human-readable message
+    if(type === "like"){
+        return "liked your post"
+    } else if(type === "comment"){
+        return "commented on your post"
+    } else {
+        return "Accept your connection"
+    }
 }
 
 useEffect(()=>{

@@ -1,3 +1,36 @@
+/*
+  controllers/auth.controllers.js - Authentication Logic
+  =================================================================================
+  FUNCTIONS:
+  
+  1. signUp(firstName, lastName, userName, email, password)
+     - Validates: email not in use, userName not in use, password >= 8 chars
+     - Hashes password with bcrypt (salt rounds: 10)
+     - Creates user document, generates 7-day JWT token
+     - Sets HTTP-only cookie with secure/sameSite for production
+     - Returns: 201 + user object (password excluded)
+  
+  2. login(email, password)
+     - Finds user by email, compares password hash with bcrypt
+     - On success: generates JWT, sets cookie, returns user object
+     - Returns: 200 + user object (password excluded)
+  
+  3. logOut()
+     - Clears token cookie with same secure/sameSite settings as signup
+     - Returns: 200 + success message
+  
+  IMPORTANT:
+  - Passwords are NEVER returned to frontend
+  - Cookie settings: httpOnly=true (JS cannot access), secure in production only
+  - sameSite="none" + secure=true for cross-origin requests in production (Render)
+  - sameSite="lax" for dev (localhost, same domain)
+  
+  SECURITY NOTES:
+  - Password validation: min 8 chars (consider adding complexity rules)
+  - Duplicate check: verify both email and userName before creating
+  - Use bcrypt rounds=10 for good balance of security vs performance
+=================================================================================
+*/
 import genToken from "../config/token.js"
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"

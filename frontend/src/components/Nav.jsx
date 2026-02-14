@@ -1,3 +1,9 @@
+/*
+  Nav.jsx
+  - Top navigation bar used across pages.
+  - Features: search with debounce, quick navigation, profile popup and sign-out.
+  - Performance notes: `handleSearch` is memoized with `useCallback` and debounced in `useEffect`.
+*/
 import React, { useContext, useEffect, useState, memo, useCallback } from 'react'
 import logo2 from "../assets/logo2.png"
 import { IoSearchSharp } from "react-icons/io5";

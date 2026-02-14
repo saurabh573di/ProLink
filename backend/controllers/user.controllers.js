@@ -1,3 +1,45 @@
+/*
+  controllers/user.controllers.js - User Profile Management
+  =================================================================================
+  FUNCTIONS:
+  
+  1. getCurrentUser() - [AUTH REQUIRED]
+     - Fetches logged-in user by req.userId from JWT
+     - Excludes password field for security
+     - Used on app load to populate UserContext
+  
+  2. updateProfile(firstName, lastName, userName, headline, location, gender, skills, education, experience, profileImage, coverImage) - [AUTH + MULTIPART]
+     - Updates all mutable user fields
+     - Handles file uploads: profileImage and coverImage from req.files
+     - Uploads images to Cloudinary and stores URLs in database
+     - skills, education, experience are JSON strings; parsed before save
+     - Returns updated user object (password excluded)
+  
+  3. getProfile(userName) - [PUBLIC]
+     - Fetches any user's profile by userName
+     - Excludes password field
+     - Used for viewing other user profiles
+  
+  4. search(query) - [AUTH]
+     - Full-text search on firstName, lastName, userName, skills
+     - Uses MongoDB text search with scoring
+     - Fallback to regex search if text index fails ($options: "i" for case-insensitive)
+     - Limits results to 20 users
+     - Returns: firstName, lastName, userName, profileImage, headline, skills only
+  
+  5. getSuggestedUsers() - [AUTH]
+     - Returns users NOT in current user's connection list
+     - Excludes the user themselves
+     - Used for discovery/networking suggestions
+     - Returns: 50 random suggested users
+  
+  IMPORTANT:
+  - Always exclude password from responses: .select("-password")
+  - Images need multipart/form-data middleware (multer configured in index.js)
+  - Text search requires index on model: userSchema.index({field: "text"})
+  - Use try-catch for fallback: text search may fail if index doesn't exist yet
+=================================================================================
+*/
 import uploadOnCloudinary from "../config/cloudinary.js"
 import User from "../models/user.model.js"
 

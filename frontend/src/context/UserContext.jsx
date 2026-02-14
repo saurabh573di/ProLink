@@ -1,3 +1,13 @@
+/*
+  UserContext.jsx
+  - Global context storing user data, posts, profile info, and socket connection.
+  - Key functions:
+    * getCurrentUser(): Fetch logged-in user on app load.
+    * getPost(): Fetch all posts for the home feed.
+    * handleGetProfile(userName): Fetch another user's profile and navigate to it.
+  - Socket is initialized once when serverUrl is available and provided to consuming components.
+  - Important: Always check if arrays exist and default to [] on errors to prevent ".map is not a function".
+*/
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { authDataContext } from './AuthContext'
 import axios from 'axios'

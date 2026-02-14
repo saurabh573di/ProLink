@@ -1,3 +1,10 @@
+/*
+  Post.jsx
+  - Renders a single post including: author info, description, image, likes and comments.
+  - Implements optimistic UI updates for likes and listens to socket events to update
+    likes/comments in real-time.
+  - Important: optimistic updates are reverted on API errors to keep state consistent.
+*/
 import React, { useContext, useEffect, useState, memo, useCallback } from 'react'
 import dp from "../assets/dp.webp"
 import moment from "moment"
@@ -67,12 +74,12 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
         // Properly cleanup event listeners to prevent memory leaks
         if(!socket) return;
         socket.on("likeUpdated",({postId,likes})=>{
-          if(postId==id){
+          if(postId === id){
             setLikes(likes)
           }
         })
         socket.on("commentAdded",({postId,comm})=>{
-          if(postId==id){
+          if(postId === id){
             setComments(comm)
           }
         })

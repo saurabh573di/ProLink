@@ -1,4 +1,10 @@
-// src/axios/AxiosInstance.jsx
+/*
+  AxiosInstance.jsx
+  - Centralized axios instance for all API requests to the backend server.
+  - Configuration: base URL from environment, credentials enabled, 10s timeout.
+  - Interceptors: Request interceptor adds compression headers; response interceptor logs errors in dev.
+  - Usage: Import and use for all API calls instead of axios directly.
+*/
 import axios from "axios";
 
 const API = axios.create({

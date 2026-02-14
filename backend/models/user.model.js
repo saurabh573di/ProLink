@@ -1,3 +1,31 @@
+/*
+  models/user.model.js - User Database Schema
+  =================================================================================
+  FIELDS:
+  - firstName, lastName: User's name (required)
+  - userName: Unique username for public profiles
+  - email: Unique email for login and notifications
+  - password: Hashed password (bcrypt in auth controller)
+  - profileImage, coverImage: URLs from Cloudinary
+  - headline: Job title or bio (e.g., "Senior Developer")
+  - skills: Array of skill tags
+  - education: Array of school/degree/field info
+  - location: City/region (default: "India")
+  - gender: "male" | "female" | "other"
+  - experience: Array of job history (title, company, description)
+  - connection: Array of user IDs (who this user is connected to)
+  - timestamps: createdAt, updatedAt auto fields
+  
+  INDEXES:
+  - userName, email: Single-field indexes for fast lookups
+  - Full-text search: firstName, lastName, userName, skills for search feature
+  
+  IMPORTANT:
+  - All user data should be validated in the controller before saving
+  - Passwords should NEVER be returned to frontend; exclude in queries: .select("-password")
+  - Connection array stores ObjectIds; use .populate("connection") to get full user objects
+=================================================================================
+*/
 import mongoose from "mongoose";
 
 const userSchema=new mongoose.Schema({

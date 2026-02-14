@@ -1,3 +1,26 @@
+/**
+ * ============================================
+ * APP.JSX - Main React Router Configuration
+ * ============================================
+ * 
+ * PURPOSE: Central routing file that manages all page navigation
+ * - Routes requests to different pages based on URL
+ * - Protects routes (requires authentication)
+ * - Redirects unauthenticated users to login
+ * 
+ * PAGES:
+ * - / (Home): Main feed with posts
+ * - /login: User login page
+ * - /signup: User registration page
+ * - /profile: User profile page (own profile)
+ * - /network: Connection requests & connections list
+ * - /notification: Notifications page
+ * 
+ * PERFORMANCE: Uses React.lazy() for code splitting
+ * - Reduces initial bundle size
+ * - Pages load only when needed
+ */
+
 import React, { useContext, lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 // Lazy load pages for code splitting - improves initial page load performance
@@ -11,6 +34,7 @@ const Notification = lazy(() => import('./pages/Notification'))
 import { userDataContext } from './context/UserContext'
 
 function App() {
+  // Get user data from context - null means not logged in
   let {userData}=useContext(userDataContext)
   return (
    <Routes>

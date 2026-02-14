@@ -1,3 +1,9 @@
+/*
+    Profile.jsx
+    - Displays a user's public profile including posts, skills, education and experience.
+    - If viewing your own profile (`profileData._id === userData._id`) you can edit it via `EditProfile`.
+    - `profilePost` is derived from global `postData` and filtered by the profile owner's id.
+*/
 import React, { useContext, useEffect, useState } from 'react'
 import Nav from '../components/Nav'
 import dp from "../assets/dp.webp"
@@ -13,13 +19,15 @@ import ConnectionButton from '../components/ConnectionButton';
 function Profile() {
 
     let {userData,setUserData,edit,setEdit,postData,setPostData,profileData,setProfileData}=useContext(userDataContext)
+    // Local state for posts authored by the profile being viewed
     let [profilePost,setProfilePost]=useState([])
     
 let {serverUrl}=useContext(authDataContext)
    
+// Recompute the posts for this profile whenever `profileData` or `postData` change
 useEffect(()=>{
-setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData._id.toString()))
-},[profileData])
+    setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData._id.toString()))
+},[profileData, postData])
 
   return (
     <div className='w-full min-h-[100vh] bg-[#f0efe7] flex flex-col items-center pt-[120px] pb-[40px]'>

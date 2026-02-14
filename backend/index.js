@@ -1,3 +1,25 @@
+/*
+  index.js - Main Server Entry Point
+  =================================================================================
+  RESPONSIBILITIES:
+  - Initialize Express server and HTTP server with Socket.IO
+  - Configure middleware (helmet, compression, CORS, cookie parser, JSON)
+  - Setup all API routes (auth, user, post, connection, notification)
+  - Initialize Socket.IO for real-time events (connections, disconnections, status updates)
+  - Manage userSocketMap to track active users and their socket IDs
+  
+  KEY FEATURES:
+  - Security: helmet() for HTTP headers, CORS with origin whitelist
+  - Performance: compression middleware for response gzip, trust proxy for production
+  - Real-time: Socket.IO with fallback CORS configuration
+  - Database: Connects to MongoDB on startup
+  
+  IMPORTANT:
+  - userSocketMap is exported for use in controllers to send real-time notifications
+  - Socket events: "register" stores userId->socketId; "disconnect" cleans up
+  - Server listens on process.env.PORT or defaults to 5000
+=================================================================================
+*/
 import express from "express";
 import dotenv from "dotenv";
 import connectDb from "./config/db.js";

@@ -1,3 +1,65 @@
+/*
+  controllers/connection.controllers.js - Friend Connections & Requests
+  =================================================================================
+  FUNCTIONS:
+  
+  1. sendConnection(targetUserId) - [AUTH]
+     - Validates: not the user themselves, not already connected, request not pending
+     - Creates Connection record (sender, receiver, status="pending")
+     - Sends socket event "statusUpdate" to both users in real-time
+     - Receiver sees status="received", sender sees status="pending"
+     - Returns: 200 + new connection request
+  
+  2. acceptConnection(connectionId) - [AUTH]
+     - Updates connection status: "pending" -> "accepted"
+     - Adds both users to each other's connection array (bidirectional)
+     - Creates "connectionAccepted" notification for sender
+     - Emits socket "statusUpdate" to both: status="disconnect"
+     - Returns: 200 + success message
+  
+  3. rejectConnection(connectionId) - [AUTH]
+     - Updates connection status: "pending" -> "rejected"
+     - Does NOT add to connection arrays
+     - No socket notification sent
+     - Returns: 200 + success message
+  
+  4. getConnectionStatus(targetUserId) - [AUTH]
+     - Returns current status between two users:
+       * "disconnect": Already connected
+       * "pending": Request sent by current user, awaiting approval
+       * "received": Request sent by target user to current user
+       * "Connect": No connection or pending request
+     - Used by ConnectionButton component to show right label/action
+  
+  5. removeConnection(targetUserId) - [AUTH]
+     - Removes both users from each other's connection array
+     - Emits socket "statusUpdate" to both: status="Connect"
+     - Used when user clicks disconnect/remove
+  
+  6. getConnectionRequests() - [AUTH]
+     - Fetches all pending connection requests TO current user
+     - Populates sender with firstName, lastName, email, userName, profileImage, headline
+     - Used in Network page to show list of pending requests
+  
+  7. getUserConnections(userId) - [AUTH]
+     - Fetches all ACCEPTED connections for a user
+     - Populates each connection with basic user info
+     - Used for viewing someone's connections
+  
+  IMPORTANT:
+  - userSocketMap: stores userId->socketId mapping for targeted socket events
+  - Connection must be bidirectional: both users added to each other's array
+  - Status values: "pending" (awaiting), "accepted" (connected), "rejected" (denied)
+  - Socket events keep UI in sync across tabs/devices in real-time
+  - Always validate: not self, not already friends, request not pending
+  
+  SOCKET EVENTS EMITTED:
+  - sendConnection: receiver gets "statusUpdate" with status="received"
+  - sendConnection: sender gets "statusUpdate" with status="pending"
+  - acceptConnection: both get "statusUpdate" with status="disconnect"
+  - removeConnection: both get "statusUpdate" with status="Connect"
+=================================================================================
+*/
 
 import Connection from "../models/connection.model.js"
 import User from "../models/user.model.js"

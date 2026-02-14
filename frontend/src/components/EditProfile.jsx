@@ -1,3 +1,11 @@
+/*
+  EditProfile.jsx
+  - Modal used for editing the logged-in user's profile details.
+  - Handles profile/cover image selection (client preview + upload), skills,
+    education and experience lists, and sends a multipart form to the server.
+  - Note: object URLs are created for previewing images; consider revoking them
+    if you later convert to a persistent preview solution.
+*/
 import React, { useContext, useRef, useState } from 'react'
 import { RxCross1 } from "react-icons/rx";
 import { userDataContext } from '../context/UserContext';
@@ -96,6 +104,7 @@ function addEducation(e){
       
     }
 
+    // Show instant previews for selected images (object URLs)
     function handleProfileImage(e){
      let file=e.target.files[0]
      setBackendProfileImage(file)

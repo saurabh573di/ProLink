@@ -1,3 +1,8 @@
+/*
+  Network.jsx
+  - Page to manage connection invitations (accept / reject).
+  - Initializes a socket connection to receive real-time updates when `serverUrl` is available.
+*/
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import Nav from '../components/Nav'
 import axios from 'axios'
@@ -13,7 +18,8 @@ let socket;
 function Network() {
 let {serverUrl}=useContext(authDataContext)
 
-// Initialize socket connection when serverUrl is available
+// Initialize socket connection when `serverUrl` becomes available.
+// Keep socket module-scoped so reconnects are controlled here. Always clean up on unmount.
 useEffect(() => {
   if (serverUrl && !socket) {
     socket = io(serverUrl);
@@ -21,6 +27,7 @@ useEffect(() => {
   return () => {
     if (socket) {
       socket.disconnect();
+      socket = null;
     }
   };
 }, [serverUrl]);

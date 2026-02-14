@@ -1,3 +1,8 @@
+/*
+  Signup.jsx
+  - User registration page. Collects basic user info and creates an account.
+  - On successful signup the user is stored in `userDataContext` and redirected to home.
+*/
 import React, { useContext, useState } from 'react'
 import logo from "../assets/logo.svg"
 import {useNavigate} from "react-router-dom"
@@ -39,7 +44,8 @@ password
       setPassword("")
       setUserName("")
     } catch (error) {
-      setErr(error.response.data.message)
+      // Guard against missing response shapes
+      setErr(error?.response?.data?.message || "Signup failed")
       setLoading(false)
     }
   }
