@@ -11,7 +11,7 @@ import { LuSendHorizontal } from "react-icons/lu";
 import {io} from "socket.io-client"
 import ConnectionButton from './ConnectionButton';
 
-let socket=io("http://localhost:8000")
+let socket;
 function Post({ id, author, like, comment, description, image,createdAt }) {
     
     let [more,setMore]=useState(false)
@@ -21,6 +21,13 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
   let [commentContent,setCommentContent]=useState("")
   let [comments,setComments]=useState(comment)
   let [showComment,setShowComment]=useState(false)
+
+  // Initialize socket connection when serverUrl is available
+  useEffect(() => {
+    if (serverUrl && !socket) {
+      socket = io(serverUrl);
+    }
+  }, [serverUrl]);
     const handleLike=async ()=>{
       try {
         let result=await axios.get(serverUrl+`/api/post/like/${id}`,{withCredentials:true})
