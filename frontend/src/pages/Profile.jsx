@@ -18,7 +18,7 @@ function Profile() {
 let {serverUrl}=useContext(authDataContext)
    
 useEffect(()=>{
-setProfilePost(postData.filter((post)=>post.author._id==profileData._id))
+setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData._id.toString()))
 },[profileData])
 
   return (

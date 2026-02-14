@@ -37,18 +37,13 @@ async function handleUploadPost(){
     if(backendImage){
       formdata.append("image",backendImage)
     }
-let result=await axios.post(serverUrl+"/api/post/create",formdata,{
-  withCredentials:true,
-  headers:{
-    'Content-Type':'multipart/form-data'
-  }
-})
+let result=await axios.post(serverUrl+"/api/post/create",formdata,{withCredentials:true})
 console.log(result)
 setPosting(false)
 setUploadPost(false)
   } catch (error) {
     setPosting(false)
-    console.log("Post error:", error.response?.data || error.message);
+    console.log(error);
     
   }
 }
@@ -73,8 +68,11 @@ getPost()
 
   return (
     <div className='w-full min-h-[100vh] bg-[#f0efe7] pt-[100px] flex items-center lg:items-start justify-center gap-[20px] px-[20px] flex-col lg:flex-row relative pb-[50px]'>
-      {edit && <EditProfile/>}
-       
+      {!userData ? (
+        <div className='text-center text-gray-600'>Loading...</div>
+      ) : (
+        <>
+       {edit && <EditProfile/>}
       <Nav/>
      
        <div className='w-full lg:w-[25%] min-h-[200px] bg-[white] shadow-lg rounded-lg p-[10px] relative '>
@@ -134,7 +132,7 @@ getPost()
      
  
 
-       <div className=' w-full lg:w-[50%] min-h-[200px] bg-bg-[#f0efe7] flex flex-col gap-[20px]'>
+       <div className=' w-full lg:w-[50%] min-h-[200px] bg-[#f0efe7] flex flex-col gap-[20px]'>
         <div className='w-full h-[120px] bg-white shadow-lg rounded-lg flex items-center p-[20px]  justify-center gap-[10px]'>
         <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center  cursor-pointer' >
             <img src={userData.profileImage || dp} alt="" className='h-full'/>
@@ -167,7 +165,8 @@ getPost()
           No Suggested Users
           </div>}
        </div>
-
+        </>
+      )}
     </div>
   )
 }

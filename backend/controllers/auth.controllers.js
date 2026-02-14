@@ -35,7 +35,9 @@ export const signUp=async (req,res)=>{
         path: "/"
        })
        
-      return res.status(201).json(user)
+      const userWithoutPassword = user.toObject();
+      delete userWithoutPassword.password;
+      return res.status(201).json(userWithoutPassword)
 
     } catch (error) {
         console.log(error);
@@ -65,7 +67,8 @@ export const login=async (req,res)=>{
          secure: process.env.NODE_ENV === "production",
          path: "/"
         })
-       return res.status(200).json(user)
+       const userData = await User.findById(user._id).select("-password")
+       return res.status(200).json(userData)
     } catch (error) {
         console.log(error);
         return res.status(500).json({message:"login error"})

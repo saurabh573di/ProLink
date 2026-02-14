@@ -13,7 +13,7 @@ export const sendConnection= async (req,res)=>{
     return res.status(400).json({message:"you can not send request yourself"})
  }
 
- if(user.connection.includes(id)){
+ if(user.connection.some(connId => connId.toString() === id)){
     return res.status(400).json({message:"you are already connected"})
  }
 
@@ -76,19 +76,19 @@ export const acceptConnection=async (req,res)=>{
                 })
         await connection.save()
         await User.findByIdAndUpdate(req.userId,{
-            $addToSet:{connection:connection.sender._id}
+            $addToSet:{connection:connection.sender}
         })
-        await User.findByIdAndUpdate(connection.sender._id,{
+        await User.findByIdAndUpdate(connection.sender,{
             $addToSet:{connection:userId}
         })
 
 
         
  let receiverSocketId=userSocketMap.get(userId)
- let senderSocketId=userSocketMap.get(connection.sender._id.toString())
+ let senderSocketId=userSocketMap.get(connection.sender.toString())
 
 if(receiverSocketId){
-io.to(receiverSocketId).emit("statusUpdate",{updatedUserId:connection.sender._id,newStatus:"disconnect"})
+io.to(receiverSocketId).emit("statusUpdate",{updatedUserId:connection.sender,newStatus:"disconnect"})
 }
 if(senderSocketId){
     io.to(senderSocketId).emit("statusUpdate",{updatedUserId:userId,newStatus:"disconnect"})

@@ -1,24 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { authDataContext } from '../context/AuthContext'
 import axios from 'axios'
-import io from "socket.io-client"
 import { userDataContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 
-let socket;
-
 function ConnectionButton({userId}) {
 let {serverUrl}=useContext(authDataContext)
-let {userData,setUserData}=useContext(userDataContext)
+let {userData,setUserData,socket}=useContext(userDataContext)
 let [status,setStatus]=useState("")
 let navigate=useNavigate()
-
-// Initialize socket connection when serverUrl is available
-useEffect(() => {
-  if (serverUrl && !socket) {
-    socket = io(serverUrl);
-  }
-}, [serverUrl]);
     const handleSendConnection=async ()=>{
         try {
             let result=await axios.post(`${serverUrl}/api/connection/send/${userId}`,{},{withCredentials:true})
@@ -48,20 +38,21 @@ useEffect(() => {
     }
 
 useEffect(()=>{
+    if(!socket) return;
     socket.emit("register",userData._id)
     handleGetStatus()
 
     socket.on("statusUpdate",({updatedUserId,newStatus})=>{
-if(updatedUserId==userId){
+if(updatedUserId.toString()===userId.toString()){
     setStatus(newStatus)
 }
     })
 
     return ()=>{
-        socket.off("statusUpdate")
+        if(socket) socket.off("statusUpdate")
     }
 
-},[userId])
+},[userId,socket])
 
 const handleClick=async ()=>{
     if(status=="disconnect"){

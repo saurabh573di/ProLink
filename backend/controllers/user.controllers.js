@@ -27,11 +27,11 @@ export const updateProfile=async (req,res)=>{
    let profileImage;
    let coverImage
    console.log(req.files)
-       if(req.files.profileImage){
-        profileImage=await uploadOnCloudinary(req.files.profileImage[0].path)
+       if(req.files && req.files.profileImage){
+        profileImage=await uploadOnCloudinary(req.files.profileImage[0].buffer)
        }
-       if(req.files.coverImage){
-        coverImage=await uploadOnCloudinary(req.files.coverImage[0].path)
+       if(req.files && req.files.coverImage){
+        coverImage=await uploadOnCloudinary(req.files.coverImage[0].buffer)
        }
 
        let user=await User.findByIdAndUpdate(req.userId,{
@@ -71,7 +71,7 @@ return res.status(400).json({message:"query is required"})
                 {firstName:{$regex:query,$options:"i"}},
                 {lastName:{$regex:query,$options:"i"}},
                 {userName:{$regex:query,$options:"i"}},
-                {skills:{$in:[query]}}
+                {skills:{$regex:query,$options:"i"}}
             ]
         })
 
@@ -88,7 +88,8 @@ export const getSuggestedUser=async (req,res)=>{
 
         let suggestedUsers=await User.find({
             _id:{
-                $ne:currentUser,$nin:currentUser.connection
+                $ne:req.userId,
+                $nin:currentUser.connection
             }
            
         }).select("-password")

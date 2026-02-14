@@ -2,7 +2,10 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { authDataContext } from './AuthContext'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import io from 'socket.io-client'
 export const userDataContext=createContext()
+
+let socket;
 
 function UserContext({children}) {
 let [userData,setUserData]=useState(null)
@@ -11,6 +14,14 @@ let [edit,setEdit]=useState(false)
 let [postData,setPostData]=useState([])
 let [profileData,setProfileData]=useState([])
 let navigate=useNavigate()
+
+// Initialize socket once when serverUrl is available
+useEffect(() => {
+  if (serverUrl && !socket) {
+    socket = io(serverUrl);
+  }
+}, [serverUrl]);
+
 const getCurrentUser=async ()=>{
     try {
         let result=await axios.get(serverUrl+"/api/user/currentuser",{withCredentials:true})
@@ -56,7 +67,7 @@ getCurrentUser();
 
 
     const value={
-        userData,setUserData,edit,setEdit,postData,setPostData,getPost,handleGetProfile,profileData,setProfileData
+        userData,setUserData,edit,setEdit,postData,setPostData,getPost,handleGetProfile,profileData,setProfileData,socket
     }
   return (
     <div>

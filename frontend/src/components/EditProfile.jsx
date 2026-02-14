@@ -218,7 +218,7 @@ const handleSaveProfile=async ()=>{
       </div>
     </div>
 
-    <button className='w-[100%] h-[50px] rounded-full bg-[#24b2ff] mt-[40px] text-white' disable={saving} onClick={()=>handleSaveProfile()}>{saving?"saving...":"Save Profile"}</button>
+    <button className='w-[100%] h-[50px] rounded-full bg-[#24b2ff] mt-[40px] text-white' disabled={saving} onClick={()=>handleSaveProfile()}>{saving?"saving...":"Save Profile"}</button>
 </div>
 
 

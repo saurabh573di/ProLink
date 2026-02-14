@@ -45,7 +45,7 @@ try {
     const handleRejectConnection=async (requestId)=>{
         try {
             let result = await axios.put(`${serverUrl}/api/connection/reject/${requestId}`,{},{withCredentials:true})
-            setConnections(connections.filter((con)=>con._id===requestId))
+            setConnections(connections.filter((con)=>con._id!==requestId))
         } catch (error) {
             console.log(error)
         }

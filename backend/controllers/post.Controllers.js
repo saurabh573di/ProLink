@@ -48,11 +48,18 @@ export const like =async (req,res)=>{
         if(!post){
             return res.status(400).json({message:"post not found"})
         }
-        if(post.like.includes(userId)){
-          post.like=post.like.filter((id)=>id!=userId)
+        if(post.like.some(id => id.toString() === userId)){
+          post.like=post.like.filter((id)=>id.toString() !== userId)
+          // Delete the notification when user unlikes
+          await Notification.findOneAndDelete({
+            receiver:post.author,
+            type:"like",
+            relatedUser:userId,
+            relatedPost:postId
+          })
         }else{
             post.like.push(userId)
-            if(post.author!=userId){
+            if(post.author.toString() !== userId){
                 let notification=await Notification.create({
                     receiver:post.author,
                     type:"like",
@@ -83,7 +90,7 @@ export const comment=async (req,res)=>{
             $push:{comment:{content,user:userId}}
         },{new:true})
         .populate("comment.user","firstName lastName profileImage headline")
-        if(post.author!=userId){
+        if(post.author.toString() !== userId){
         let notification=await Notification.create({
             receiver:post.author,
             type:"comment",

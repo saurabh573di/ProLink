@@ -8,49 +8,41 @@ import { authDataContext } from '../context/AuthContext';
 import { userDataContext } from '../context/UserContext';
 import { BiSolidLike } from "react-icons/bi";
 import { LuSendHorizontal } from "react-icons/lu";
-import {io} from "socket.io-client"
 import ConnectionButton from './ConnectionButton';
 
-let socket;
 function Post({ id, author, like, comment, description, image,createdAt }) {
     
     let [more,setMore]=useState(false)
   let {serverUrl}=useContext(authDataContext)
-  let {userData,setUserData,getPost,handleGetProfile}=useContext(userDataContext)
+  let {userData,setUserData,getPost,handleGetProfile,socket}=useContext(userDataContext)
   let [likes,setLikes]=useState(like)
   let [commentContent,setCommentContent]=useState("")
   let [comments,setComments]=useState(comment)
   let [showComment,setShowComment]=useState(false)
 
-  // Initialize socket connection when serverUrl is available
-  useEffect(() => {
-    if (serverUrl && !socket) {
-      socket = io(serverUrl);
+  const handleLike=async ()=>{
+    try {
+      let result=await axios.get(serverUrl+`/api/post/like/${id}`,{withCredentials:true})
+     setLikes(result.data.like)
+    } catch (error) {
+      console.log(error)
     }
-  }, [serverUrl]);
-    const handleLike=async ()=>{
+  }
+  const handleComment=async (e)=>{
+     e.preventDefault()
       try {
-        let result=await axios.get(serverUrl+`/api/post/like/${id}`,{withCredentials:true})
-       setLikes(result.data.like)
+        let result=await axios.post(serverUrl+`/api/post/comment/${id}`,{
+          content:commentContent
+        },{withCredentials:true})
+        setComments(result.data.comment)
+      setCommentContent("")
       } catch (error) {
         console.log(error)
       }
     }
-    const handleComment=async (e)=>{
-       e.preventDefault()
-        try {
-          let result=await axios.post(serverUrl+`/api/post/comment/${id}`,{
-            content:commentContent
-          },{withCredentials:true})
-          setComments(result.data.comment)
-        setCommentContent("")
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
 
       useEffect(()=>{
+        if(!socket) return;
         socket.on("likeUpdated",({postId,likes})=>{
           if(postId==id){
             setLikes(likes)
@@ -63,10 +55,12 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
         })
 
         return ()=>{
+if(socket){
 socket.off("likeUpdated")
 socket.off("commentAdded")
+}
         }
-      },[id])
+      },[id,socket])
 
    useEffect(()=>{
     getPost()
@@ -111,11 +105,11 @@ socket.off("commentAdded")
 <div className='flex items-center justify-center gap-[5px] text-[18px] cursor-pointer' onClick={()=>setShowComment(prev=>!prev)}><span>{comment.length}</span><span>comments</span></div>
 </div>
 <div className='flex justify-start items-center w-full p-[20px] gap-[20px]'>
-{!likes.includes(userData._id) &&  <div className='flex justify-center items-center gap-[5px] cursor-pointer' onClick={handleLike}>
+{!likes.some(id => id.toString() === userData._id.toString()) &&  <div className='flex justify-center items-center gap-[5px] cursor-pointer' onClick={handleLike}>
 <BiLike className=' w-[24px] h-[24px]'/>
 <span>Like</span>
 </div>}
-{likes.includes(userData._id) &&  <div className='flex justify-center items-center gap-[5px] cursor-pointer' onClick={handleLike}>
+{likes.some(id => id.toString() === userData._id.toString()) &&  <div className='flex justify-center items-center gap-[5px] cursor-pointer' onClick={handleLike}>
 <BiSolidLike className=' w-[24px] h-[24px] text-[#07a4ff]'/>
 <span className="text-[#07a4ff] font-semibold">Liked</span>
 </div>}
