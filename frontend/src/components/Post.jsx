@@ -23,13 +23,28 @@ function Post({ id, author, like, comment, description, image,createdAt }) {
   // PERFORMANCE: useCallback prevents function recreation on every render
   // This prevents unnecessary re-renders of child components
   const handleLike=useCallback(async ()=>{
+    const isAlreadyLiked = likes.some(id => id.toString() === userData._id.toString());
+    
+    // 🔥 OPTIMISTIC UPDATE: Update UI instantly
+    if (isAlreadyLiked) {
+      setLikes(prev => prev.filter(id => id.toString() !== userData._id.toString()));
+    } else {
+      setLikes(prev => [...prev, userData._id]);
+    }
+
+    // 🚀 Call API in background (don't wait for response)
     try {
-      let result=await axios.get(serverUrl+`/api/post/like/${id}`,{withCredentials:true})
-     setLikes(result.data.like)
+      await axios.get(serverUrl+`/api/post/like/${id}`,{withCredentials:true})
     } catch (error) {
+      // 🔄 Revert optimistic update on error
+      if (isAlreadyLiked) {
+        setLikes(prev => [...prev, userData._id]);
+      } else {
+        setLikes(prev => prev.filter(id => id.toString() !== userData._id.toString()));
+      }
       console.log(error)
     }
-  }, [serverUrl, id])
+  }, [serverUrl, id, userData._id, likes])
   
   const handleComment=useCallback(async (e)=>{
      e.preventDefault()

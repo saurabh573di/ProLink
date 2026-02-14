@@ -56,7 +56,7 @@ try {
         handleGetRequests()
     },[])
   return (
-    <div className='w-screen h-[100vh] bg-[#f0efe7] pt-[100px] px-[20px] flex flex-col items-center gap-[40px]'>
+    <div className='w-screen h-[100vh] bg-[#f0efe7] pt-[120px] px-[20px] flex flex-col items-center gap-[40px]'>
         <Nav/>
       <div className='w-full h-[100px] bg-[white] shadow-lg rounded-lg flex items-center p-[10px] text-[22px] text-gray-600'>
 Invitations {connections.length}

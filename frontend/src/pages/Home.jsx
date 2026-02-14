@@ -79,7 +79,7 @@ getPost()
 
 
   return (
-    <div className='w-full min-h-[100vh] bg-[#f0efe7] pt-[100px] flex items-center lg:items-start justify-center gap-[20px] px-[20px] flex-col lg:flex-row relative pb-[50px]'>
+    <div className='w-full min-h-[100vh] bg-[#f0efe7] pt-[120px] flex items-center lg:items-start justify-center gap-[30px] px-[20px] flex-col lg:flex-row relative pb-[50px]'>
       {!userData ? (
         <div className='text-center text-gray-600'>Loading...</div>
       ) : (

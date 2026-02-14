@@ -35,6 +35,8 @@ comment:[
 // Add indexes for performance
 postSchema.index({ author: 1 })
 postSchema.index({ createdAt: -1 })
+postSchema.index({ like: 1 }) // Index for like queries
+postSchema.index({ "comment.user": 1 }) // Index for comment queries
 
 const Post=mongoose.model("Post",postSchema)
 export default Post

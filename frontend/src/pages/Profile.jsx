@@ -22,11 +22,11 @@ setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData.
 },[profileData])
 
   return (
-    <div className='w-full min-h-[100vh] bg-[#f0efe7] flex flex-col items-center pt-[100px] pb-[40px]'>
+    <div className='w-full min-h-[100vh] bg-[#f0efe7] flex flex-col items-center pt-[120px] pb-[40px]'>
       <Nav/>
       {edit && <EditProfile/>}
       
-      <div className='w-full max-w-[900px] min-h-[100vh] flex flex-col gap-[10px]'>
+      <div className='w-full max-w-[900px] min-h-[100vh] flex flex-col gap-[30px]'>
 
         <div className='relative bg-[white] pb-[40px] rounded shadow-lg'>
             <div className='w-[100%] h-[100px] bg-gray-400 rounded overflow-hidden flex items-center justify-center relative cursor-pointer'>

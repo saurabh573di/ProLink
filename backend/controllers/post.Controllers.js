@@ -58,36 +58,61 @@ export const like =async (req,res)=>{
     try {
         let postId=req.params.id
         let userId=req.userId
-        let post=await Post.findById(postId)
+        
+        // 🔥 Check if user already liked
+        const post = await Post.findById(postId);
         if(!post){
             return res.status(400).json({message:"post not found"})
         }
-        if(post.like.some(id => id.toString() === userId)){
-          post.like=post.like.filter((id)=>id.toString() !== userId)
-          // Delete the notification when user unlikes
-          await Notification.findOneAndDelete({
-            receiver:post.author,
-            type:"like",
-            relatedUser:userId,
-            relatedPost:postId
-          })
+        
+        const alreadyLiked = post.like.some(id => id.toString() === userId);
+        
+        // ⚡ ATOMIC UPDATE: Use MongoDB operators (much faster than find-modify-save)
+        if(alreadyLiked){
+            // Unlike: Remove from likes array
+            await Post.findByIdAndUpdate(
+                postId,
+                { $pull: { like: userId } },
+                { new: false }
+            );
+            
+            // Delete the notification when user unlikes
+            await Notification.findOneAndDelete({
+                receiver:post.author,
+                type:"like",
+                relatedUser:userId,
+                relatedPost:postId
+            })
         }else{
-            post.like.push(userId)
+            // Like: Add to likes array (only if not already exists)
+            await Post.findByIdAndUpdate(
+                postId,
+                { $addToSet: { like: userId } },
+                { new: false }
+            );
+            
+            // Create notification only if not the post author
             if(post.author.toString() !== userId){
-                let notification=await Notification.create({
+                await Notification.create({
                     receiver:post.author,
                     type:"like",
                     relatedUser:userId,
                     relatedPost:postId
                 })
             }
-           
         }
-        await post.save()
-      io.emit("likeUpdated",{postId,likes:post.like})
+        
+        // 🚀 Fetch updated likes array only (minimal data)
+        const updatedPost = await Post.findById(postId).select('like');
+        
+        // 📡 Emit socket event with minimal data
+        io.emit("likeUpdated",{postId, likes: updatedPost.like})
        
-
-     return  res.status(200).json(post)
+        // ⚡ Return minimal response for client (not entire post)
+        return res.status(200).json({ 
+            success: true,
+            likes: updatedPost.like 
+        })
 
     } catch (error) {
       return res.status(500).json({message:`like error ${error}`})  

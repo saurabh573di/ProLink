@@ -65,7 +65,7 @@ useEffect(()=>{
         <img src={logo2}alt="" className='w-[50px]'/>
       </div>
       {!activeSearch && <div><IoSearchSharp className='w-[23px] h-[23px] text-gray-600 lg:hidden cursor-pointer hover:text-gray-800 transition-colors' onClick={()=>setActiveSearch(true)}/></div>}
-      {searchData.length>0 &&   <div className='absolute top-[90px] h-[500px] left-[0px] lg:left-[120px] shadow-lg w-[100%] lg:w-[700px] bg-white flex flex-col gap-[0px] p-[20px] overflow-auto rounded-lg'>
+      {searchData.length>0 &&   <div className='absolute top-[90px] h-[500px] left-[0px] lg:left-[60px] shadow-xl w-[100%] lg:w-[650px] bg-white flex flex-col gap-[0px] p-[15px] overflow-auto rounded-lg border border-gray-200'>
          {searchData.map((sea)=>(
           <div className='flex gap-[20px] items-center border-b-2 border-b-gray-200 p-[15px] hover:bg-gray-50 cursor-pointer rounded-lg transition-colors active:bg-gray-100' onClick={()=>handleGetProfile(sea.userName)} onTouchEnd={()=>handleGetProfile(sea.userName)}>
          <div className='w-[70px] h-[70px] rounded-full overflow-hidden flex-shrink-0'>
@@ -81,7 +81,7 @@ useEffect(()=>{
       </div>}
      
     
-      <form className={`w-[190px] lg:w-[350px] h-[40px] bg-[#f0efe7] flex items-center gap-[10px] px-[10px] py-[5px] rounded-full hover:bg-gray-200 transition-colors focus-within:bg-white focus-within:shadow-md ${!activeSearch?'hidden lg:flex':'flex'}`}>
+      <form className={`w-[190px] lg:w-[350px] h-[40px] bg-white flex items-center gap-[10px] px-[12px] py-[5px] rounded-full border-2 border-gray-300 hover:border-gray-400 transition-colors focus-within:border-blue-500 focus-within:shadow-md ${!activeSearch?'hidden lg:flex':'flex'}`}>
      <div><IoSearchSharp className='w-[23px] h-[23px] text-gray-600'/></div>
      <input type="text" className='w-[80%] h-full bg-transparent outline-none border-0' placeholder='search users...' onChange={(e)=>setSearchInput(e.target.value)} value={searchInput} onFocus={()=>setActiveSearch(true)} onBlur={()=>setTimeout(()=>setActiveSearch(false), 200)}/>
       </form>
