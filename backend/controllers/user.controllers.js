@@ -105,7 +105,7 @@ export const getprofile=async (req,res)=>{
         console.log(error)
         return res.status(500).json({message:`get profile error ${error}`})
     }
-
+}
 
 export const search=async (req,res)=>{
     try {
