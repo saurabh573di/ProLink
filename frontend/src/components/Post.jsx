@@ -113,8 +113,8 @@ socket.off("commentAdded")
 
          {/* Responsive image container */}
          {image && 
-         <div className='w-full h-[200px] md:h-[300px] overflow-hidden flex justify-center rounded-lg'>
-<img src={image} alt="" className='w-full h-full object-cover rounded-lg' loading="lazy" onError={(e) => e.target.style.display = 'none'}/>
+         <div className='w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center'>
+<img src={image} alt="" className='w-full max-h-[400px] md:max-h-[500px] object-contain rounded-lg' loading="lazy" onError={(e) => e.target.style.display = 'none'}/>
 </div>}
 
 <div>

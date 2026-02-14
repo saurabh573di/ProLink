@@ -65,7 +65,7 @@ await handleSendConnection()
 }
 
   return (
-    <button className='min-w-[100px] h-[40px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff]' onClick={handleClick} disabled={status=="pending"}>{status}</button>
+    <button className='min-w-[110px] h-[40px] md:min-w-[120px] md:h-[44px] px-[15px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] md:text-[16px] font-semibold hover:bg-[#2dc0ff] hover:text-white transition-all active:scale-95 touch-manipulation' onClick={handleClick} disabled={status=="pending"}>{status}</button>
   )
 }
 

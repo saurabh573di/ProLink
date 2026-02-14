@@ -42,8 +42,8 @@ setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData.
                     <div className='text-[16px]text-gray-500'>{profileData.location}</div>
                     <div className='text-[16px]text-gray-500'>{`${profileData.connection.length} connection`}</div>
                    </div>
-                   {profileData._id==userData._id &&  <button className='min-w-[150px] h-[40px] my-[20px] rounded-full border-2 ml-[20px] border-[#2dc0ff] text-[#2dc0ff] flex items-center justify-center gap-[10px]' onClick={()=>setEdit(true)}>Edit Profile <HiPencil /></button>}
-                   {profileData._id!=userData._id && <div className="ml-[20px] mt-[20px]"><ConnectionButton userId={profileData._id}/></div> }
+                   {profileData._id==userData._id &&  <button className='min-w-[150px] h-[40px] md:h-[44px] my-[20px] rounded-full border-2 ml-[20px] border-[#2dc0ff] text-[#2dc0ff] text-[14px] md:text-[16px] font-semibold flex items-center justify-center gap-[10px] hover:bg-[#2dc0ff] hover:text-white transition-all' onClick={()=>setEdit(true)}>Edit Profile <HiPencil /></button>}
+                   {profileData._id!=userData._id && <div className="ml-[20px] mt-[20px] touch-manipulation"><ConnectionButton userId={profileData._id}/></div> }
                   
         </div>
 <div className='w-full min-h-[100px] flex items-center p-[20px] text-[22px] text-gray-600 font-semibold bg-white shadow-lg rounded-lg'>{`Post (${profilePost.length})`}</div>
@@ -57,7 +57,7 @@ setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData.
 {profileData.skills.map((skill)=>(
     <div className='text-[20px]'>{skill}</div>
 ))}
-{profileData._id==userData._id && <button className='min-w-[150px] h-[40px] rounded-full border-2 ml-[20px] border-[#2dc0ff] text-[#2dc0ff] flex items-center justify-center gap-[10px]' onClick={()=>setEdit(true)}>Add Skills</button>}
+{profileData._id==userData._id && <button className='min-w-[150px] h-[40px] md:h-[44px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] md:text-[16px] font-semibold flex items-center justify-center gap-[10px] hover:bg-[#2dc0ff] hover:text-white transition-all' onClick={()=>setEdit(true)}>Add Skills</button>}
 
 </div>
 </div> }
@@ -72,7 +72,7 @@ setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData.
     </>
 ))}
 
-{profileData._id==userData._id && <button className='min-w-[150px] h-[40px] rounded-full border-2  border-[#2dc0ff] text-[#2dc0ff] flex items-center justify-center gap-[10px]' onClick={()=>setEdit(true)}>Add Education</button>}
+{profileData._id==userData._id && <button className='min-w-[150px] h-[40px] md:h-[44px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] md:text-[16px] font-semibold flex items-center justify-center gap-[10px] hover:bg-[#2dc0ff] hover:text-white transition-all' onClick={()=>setEdit(true)}>Add Education</button>}
 
 </div>
 </div> }
@@ -86,7 +86,7 @@ setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData.
     <div className='text-[20px]'>description : {ex.description}</div>
     </>
 ))}
-{profileData._id==userData._id && <button className='min-w-[150px] h-[40px] rounded-full border-2  border-[#2dc0ff] text-[#2dc0ff] flex items-center justify-center gap-[10px]' onClick={()=>setEdit(true)}>Add Experience</button>}
+{profileData._id==userData._id && <button className='min-w-[150px] h-[40px] md:h-[44px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] md:text-[16px] font-semibold flex items-center justify-center gap-[10px] hover:bg-[#2dc0ff] hover:text-white transition-all' onClick={()=>setEdit(true)}>Add Experience</button>}
 
 </div>
 </div> }
