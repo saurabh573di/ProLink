@@ -16,6 +16,10 @@ dotenv.config();
 // ================== APP & SERVER ==================
 const app = express();
 const server = http.createServer(app);
+
+// Trust proxy for production (Render uses proxies)
+app.set("trust proxy", 1);
+
 const allowedOrigin = process.env.VITE_FRONTEND_URL || "http://localhost:5173";
 
 // ================== SOCKET.IO ==================
