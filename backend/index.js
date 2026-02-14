@@ -13,32 +13,10 @@ import notificationRouter from "./routes/notification.routes.js";
 
 dotenv.config();
 
+// ================== APP & SERVER ==================
 const app = express();
 const server = http.createServer(app);
-
-// 🔥 IMPORTANT for Render (cookies + proxy)
-app.set("trust proxy", 1);
-
-// ================== CORS ==================
-const allowedOrigin = process.env.FRONTEND_URL;
-
-app.use(
-  cors({
-    origin: allowedOrigin,
-    credentials: true,
-  })
-);
-
-// ================== MIDDLEWARE ==================
-app.use(express.json());
-app.use(cookieParser());
-
-// ================== ROUTES ==================
-app.use("/api/auth", authRouter);
-app.use("/api/user", userRouter);
-app.use("/api/post", postRouter);
-app.use("/api/connection", connectionRouter);
-app.use("/api/notification", notificationRouter);
+const allowedOrigin = process.env.VITE_FRONTEND_URL || "http://localhost:5173";
 
 // ================== SOCKET.IO ==================
 export const io = new Server(server, {
@@ -47,6 +25,23 @@ export const io = new Server(server, {
     credentials: true,
   },
 });
+
+// ================== MIDDLEWARE ==================
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+  origin: allowedOrigin,
+  credentials: true,
+}));
+
+// ================== ROUTES ==================
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/post", postRouter);
+app.use("/api/connection", connectionRouter);
+app.use("/api/notification", notificationRouter);
+
+// ================== SOCKET.IO EVENTS ==================
 
 // Store userId -> socketId
 export const userSocketMap = new Map();
