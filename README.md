@@ -31,6 +31,8 @@ A comprehensive, professional fullstack LinkedIn-like social networking applicat
   - [Controllers](#controllers)
   - [Routes](#routes)
   - [Middlewares](#middlewares)
+  - [Validators](#validators)
+  - [API Versioning](#api-versioning)
   - [API Endpoints Reference](#api-endpoints-reference)
   - [Development Guidelines](#backend-development-guidelines)
   - [Security Practices](#security-practices)
@@ -735,6 +737,14 @@ backend/
 │   ├── post.routes.js                # Post endpoints (create, like, comment)
 │   ├── connection.routes.js          # Connection endpoints (send, accept, reject)
 │   └── notification.routes.js        # Notification endpoints (fetch, delete)
+│
+├── validators/                       # Feature-based Joi validation schemas
+│   ├── auth.validator.js             # Signup and login validation
+│   ├── user.validator.js             # Profile update and search validation
+│   ├── post.validator.js             # Post creation, comments, pagination validation
+│   ├── connection.validator.js       # Connection request and status validation
+│   ├── notification.validator.js     # Notification deletion validation
+│   └── index.js                      # Barrel export for all validators
 │
 └── public/                            # Static files (CSS, images if needed)
 ```
@@ -1852,9 +1862,240 @@ Errors:
 
 ---
 
+## Validators
+
+### Overview
+
+**Location:** `backend/validators/`
+
+The validators folder contains Joi validation schemas organized by feature. Each file exports validation schemas for specific endpoints, enabling consistent and secure input validation across the API.
+
+**Benefits:**
+- **Consistent Validation**: Single source of truth for validation rules
+- **Security**: Prevents invalid/malicious data from reaching database
+- **Error Handling**: Clear error messages for API consumers
+- **Maintainability**: Easy to update validation rules by feature
+- **Reusability**: Schemas can be used across multiple endpoints
+
+### Validators Structure
+
+```
+validators/
+├── auth.validator.js         - signupSchema, loginSchema
+├── user.validator.js         - updateProfileSchema, searchSchema
+├── post.validator.js         - createPostSchema, commentSchema, getPostSchema
+├── connection.validator.js   - sendConnectionSchema, updateConnectionSchema, getStatusSchema
+├── notification.validator.js - deleteNotificationSchema
+└── index.js                  - Barrel export for clean imports
+```
+
+### Usage Examples
+
+**In Route Files:**
+```javascript
+import { signupSchema, loginSchema } from "../validators/auth.validator.js"
+// OR use barrel export:
+import { signupSchema, loginSchema } from "../validators"
+
+// Apply validation middleware
+authRouter.post("/signup", validate(signupSchema), signUp)
+authRouter.post("/login", validate(loginSchema), login)
+```
+
+**Auth Validator Example:**
+```javascript
+export const signupSchema = Joi.object({
+  firstName: Joi.string().min(2).max(50).required(),
+  lastName: Joi.string().min(2).max(50).required(),
+  userName: Joi.string().alphanum().min(3).max(30).required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).max(100).required(),
+})
+
+export const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+})
+```
+
+**Post Validator Example (with custom validation):**
+```javascript
+export const createPostSchema = Joi.object({
+  description: Joi.string().max(5000).optional(),
+  // Custom validation: post must have text or image
+})
+  .external(async (value) => {
+    if (!value.description && !value.image) {
+      throw new Error("Post must have either description or image");
+    }
+  })
+  .unknown(true);  // Allow multer file object
+```
+
+### Validation Rules Reference
+
+| Feature | Validator | Fields | Rules |
+|---------|-----------|--------|-------|
+| **Auth** | auth.validator.js | firstName | min 2, max 50 chars |
+| | | lastName | min 2, max 50 chars |
+| | | userName | alphanumeric, 3-30 chars, matches regex |
+| | | email | valid email format |
+| | | password | min 8, max 100 chars |
+| **User** | user.validator.js | firstName, lastName | optional, min 2, max 50 |
+| | | headline | optional, max 100 |
+| | | skills | array of strings |
+| | | education | array of objects |
+| **Post** | post.validator.js | description | optional, max 5000 |
+| | | comment | required, min 1, max 1000 |
+| **Connection** | connection.validator.js | userId/connectionId | valid MongoDB ObjectId (24 hex) |
+| **Notification** | notification.validator.js | notificationId | valid MongoDB ObjectId (24 hex) |
+
+---
+
+## API Versioning
+
+### Overview
+
+The API uses versioning to support multiple API versions simultaneously, preventing breaking changes for existing clients.
+
+**Current Version:** `/api/v1/`  
+**Backward Compatibility:** `/api/` (old routes still functional)
+
+### Endpoint Structure
+
+```
+/api/v1/auth/signup        (NEW - versioned)
+/api/auth/signup           (OLD - still works)
+
+/api/v1/user/profile       (NEW - versioned)
+/api/user/profile          (OLD - still works)
+```
+
+### Benefits
+
+1. **Non-Breaking Updates**: Introduce new API versions without breaking existing clients
+2. **Gradual Migration**: Clients can migrate at their own pace
+3. **Backward Compatibility**: Old endpoints continue working
+4. **Future-Proof**: Easy to release v2, v3, etc. when needed
+5. **Production Ready**: Industry standard practice for API development
+
+### Implementation
+
+**In backend/index.js:**
+```javascript
+// Version 1 routes (current)
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/post", postRouter);
+app.use("/api/v1/connection", connectionRouter);
+app.use("/api/v1/notification", notificationRouter);
+
+// Backward compatibility (old routes)
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/post", postRouter);
+app.use("/api/connection", connectionRouter);
+app.use("/api/notification", notificationRouter);
+```
+
+### Frontend Integration
+
+**In frontend/.env:**
+```env
+VITE_API_BASE_URL=http://localhost:5000/api/v1
+```
+
+**API Calls:**
+```javascript
+// Automatically uses /api/v1 prefix
+const response = await axios.post(`${serverUrl}/auth/signup`, data)
+// Full URL: http://localhost:5000/api/v1/auth/signup
+```
+
+---
+
 ## Routes
 
 ### Auth Routes
+
+| Method | Endpoint | Middleware | Controller | Description |
+|--------|----------|-----------|-----------|-------------|
+| POST | `/api/v1/auth/signup` | validate(signupSchema) | `signUp` | Register new user |
+| POST | `/api/auth/signup` | validate(signupSchema) | `signUp` | Register new user (backward compat) |
+| POST | `/api/v1/auth/login` | validate(loginSchema) | `login` | Authenticate user |
+| POST | `/api/auth/login` | validate(loginSchema) | `login` | Authenticate user (backward compat) |
+| GET | `/api/v1/auth/logout` | `isAuth` | `logOut` | Logout and clear token |
+| GET | `/api/auth/logout` | `isAuth` | `logOut` | Logout and clear token (backward compat) |
+
+---
+
+### User Routes
+
+| Method | Endpoint | Middleware | Controller | Description |
+|--------|----------|-----------|-----------|-------------|
+| GET | `/api/v1/user/currentuser` | `isAuth` | `getCurrentUser` | Get logged-in user's profile |
+| GET | `/api/user/currentuser` | `isAuth` | `getCurrentUser` | Get logged-in user's profile (backward compat) |
+| GET | `/api/v1/user/profile/:userName` | `isAuth` | `getProfile` | Get any user's profile by username |
+| GET | `/api/user/profile/:userName` | `isAuth` | `getProfile` | Get any user's profile by username (backward compat) |
+| GET | `/api/v1/user/search` | `isAuth`, validate(searchSchema, 'query') | `search` | Search users by name/skills |
+| GET | `/api/user/search` | `isAuth`, validate(searchSchema, 'query') | `search` | Search users by name/skills (backward compat) |
+| GET | `/api/v1/user/suggestedusers` | `isAuth` | `getSuggestedUser` | Get users not in network |
+| GET | `/api/user/suggestedusers` | `isAuth` | `getSuggestedUser` | Get users not in network (backward compat) |
+| PUT | `/api/v1/user/updateprofile` | `isAuth`, `upload.fields()`, validate(updateProfileSchema) | `updateProfile` | Update profile with image uploads |
+| PUT | `/api/user/updateprofile` | `isAuth`, `upload.fields()`, validate(updateProfileSchema) | `updateProfile` | Update profile with image uploads (backward compat) |
+
+---
+
+### Post Routes
+
+| Method | Endpoint | Middleware | Controller | Description |
+|--------|----------|-----------|-----------|-------------|
+| POST | `/api/v1/post/create` | `isAuth`, `upload.single()`, validate(createPostSchema) | `createPost` | Create new post with optional image |
+| POST | `/api/post/create` | `isAuth`, `upload.single()`, validate(createPostSchema) | `createPost` | Create new post with optional image (backward compat) |
+| GET | `/api/v1/post/getpost` | `isAuth`, validate(getPostSchema, 'query') | `getPost` | Fetch all posts (paginated) |
+| GET | `/api/post/getpost` | `isAuth`, validate(getPostSchema, 'query') | `getPost` | Fetch all posts (paginated) (backward compat) |
+| GET | `/api/v1/post/like/:id` | `isAuth` | `like` | Toggle like on post |
+| GET | `/api/post/like/:id` | `isAuth` | `like` | Toggle like on post (backward compat) |
+| POST | `/api/v1/post/comment/:id` | `isAuth`, validate(commentSchema) | `comment` | Add comment to post |
+| POST | `/api/post/comment/:id` | `isAuth`, validate(commentSchema) | `comment` | Add comment to post (backward compat) |
+
+---
+
+### Connection Routes
+
+| Method | Endpoint | Middleware | Controller | Description |
+|--------|----------|-----------|-----------|-------------|
+| POST | `/api/v1/connection/send/:id` | `isAuth`, validate(sendConnectionSchema, 'params') | `sendConnection` | Send connection request |
+| POST | `/api/connection/send/:id` | `isAuth`, validate(sendConnectionSchema, 'params') | `sendConnection` | Send connection request (backward compat) |
+| PUT | `/api/v1/connection/accept/:connectionId` | `isAuth`, validate(updateConnectionSchema, 'params') | `acceptConnection` | Accept pending request |
+| PUT | `/api/connection/accept/:connectionId` | `isAuth`, validate(updateConnectionSchema, 'params') | `acceptConnection` | Accept pending request (backward compat) |
+| PUT | `/api/v1/connection/reject/:connectionId` | `isAuth`, validate(updateConnectionSchema, 'params') | `rejectConnection` | Reject pending request |
+| PUT | `/api/connection/reject/:connectionId` | `isAuth`, validate(updateConnectionSchema, 'params') | `rejectConnection` | Reject pending request (backward compat) |
+| GET | `/api/v1/connection/getstatus/:userId` | `isAuth`, validate(getStatusSchema, 'params') | `getConnectionStatus` | Get connection status |
+| GET | `/api/connection/getstatus/:userId` | `isAuth`, validate(getStatusSchema, 'params') | `getConnectionStatus` | Get connection status (backward compat) |
+| DELETE | `/api/v1/connection/remove/:userId` | `isAuth` | `removeConnection` | Remove/disconnect from user |
+| DELETE | `/api/connection/remove/:userId` | `isAuth` | `removeConnection` | Remove/disconnect from user (backward compat) |
+| GET | `/api/v1/connection/requests` | `isAuth` | `getConnectionRequests` | Get all pending requests |
+| GET | `/api/connection/requests` | `isAuth` | `getConnectionRequests` | Get all pending requests (backward compat) |
+| GET | `/api/v1/connection/` | `isAuth` | `getUserConnections` | Get all accepted connections |
+| GET | `/api/connection/` | `isAuth` | `getUserConnections` | Get all accepted connections (backward compat) |
+
+---
+
+### Notification Routes
+
+| Method | Endpoint | Middleware | Controller | Description |
+|--------|----------|-----------|-----------|-------------|
+| GET | `/api/v1/notification/get` | `isAuth` | `getNotifications` | Get all notifications for user |
+| GET | `/api/notification/get` | `isAuth` | `getNotifications` | Get all notifications for user (backward compat) |
+| DELETE | `/api/v1/notification/deleteone/:id` | `isAuth`, validate(deleteNotificationSchema, 'params') | `deleteNotification` | Delete single notification |
+| DELETE | `/api/notification/deleteone/:id` | `isAuth`, validate(deleteNotificationSchema, 'params') | `deleteNotification` | Delete single notification (backward compat) |
+| DELETE | `/api/v1/notification/` | `isAuth` | `clearAllNotification` | Clear all notifications |
+| DELETE | `/api/notification/` | `isAuth` | `clearAllNotification` | Clear all notifications (backward compat) |
+
+---
+
+### Auth Routes (Deprecated, kept for reference)
 
 | Method | Endpoint | Middleware | Controller | Description |
 |--------|----------|-----------|-----------|-------------|
@@ -1864,7 +2105,7 @@ Errors:
 
 ---
 
-### User Routes
+### User Routes (Deprecated, kept for reference)
 
 | Method | Endpoint | Middleware | Controller | Description |
 |--------|----------|-----------|-----------|-------------|
@@ -1876,7 +2117,7 @@ Errors:
 
 ---
 
-### Post Routes
+### Post Routes (Deprecated, kept for reference)
 
 | Method | Endpoint | Middleware | Controller | Description |
 |--------|----------|-----------|-----------|-------------|
@@ -1887,7 +2128,7 @@ Errors:
 
 ---
 
-### Connection Routes
+### Connection Routes (Deprecated, kept for reference)
 
 | Method | Endpoint | Middleware | Controller | Description |
 |--------|----------|-----------|-----------|-------------|
@@ -1901,7 +2142,7 @@ Errors:
 
 ---
 
-### Notification Routes
+### Notification Routes (Deprecated, kept for reference)
 
 | Method | Endpoint | Middleware | Controller | Description |
 |--------|----------|-----------|-----------|-------------|
@@ -1941,6 +2182,70 @@ authRouter.post('/logout', isAuth, logoutController)
 - Must be placed AFTER cookieParser middleware
 - Token validation happens on every protected request
 - Failed auth prevents controller from executing
+
+---
+
+### Validate Middleware
+
+**Location:** `backend/middlewares/validate.js`
+
+**Purpose:** Joi request validation middleware for schema validation (body, query, params)
+
+**Features:**
+- Validates request body, query parameters, or URL parameters
+- Uses Joi schemas defined in validators folder
+- Returns 400 with detailed error messages on validation failure
+- Supports multiple field validation simultaneously
+- Prevents invalid data from reaching controllers
+
+**Usage Examples:**
+
+```javascript
+// Validate request body (default)
+router.post("/signup", validate(signupSchema), signUp)
+
+// Validate query parameters
+router.get("/search", validate(searchSchema, 'query'), search)
+
+// Validate URL parameters
+router.post("/send/:id", validate(sendConnectionSchema, 'params'), sendConnection)
+```
+
+**How It Works:**
+```javascript
+const validate = (schema, type = 'body') => {
+  return async (req, res, next) => {
+    try {
+      // Validate specified data type against schema
+      const validated = await schema.validateAsync(req[type]);
+      req[type] = validated;  // Replace with validated data
+      next();
+    } catch (error) {
+      // Return 400 with detailed error info
+      return res.status(400).json({
+        message: "Validation Error",
+        errors: [
+          {
+            field: "fieldName",
+            message: "Error description"
+          }
+        ]
+      });
+    }
+  };
+};
+```
+
+**Error Response Example:**
+```json
+{
+  "message": "Validation Error",
+  "errors": [
+    {"field": "firstName", "message": "First name must be at least 2 characters"},
+    {"field": "password", "message": "Password must be at least 8 characters"}
+  ]
+}
+```
 
 ---
 
