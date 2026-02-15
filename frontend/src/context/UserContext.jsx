@@ -34,7 +34,7 @@ useEffect(() => {
 
 const getCurrentUser=async ()=>{
     try {
-        let result=await axios.get(serverUrl+"/api/user/currentuser",{withCredentials:true})
+        let result=await axios.get(serverUrl+"/api/v1/user/currentuser",{withCredentials:true})
         setUserData(result.data)
         return
     } catch (error) {
@@ -45,7 +45,7 @@ const getCurrentUser=async ()=>{
 
 const getPost=async ()=>{
   try {
-    let result=await axios.get(serverUrl+"/api/post/getpost",{
+    let result=await axios.get(serverUrl+"/api/v1/post/getpost",{
       withCredentials:true
     })
     console.log(result)
@@ -62,7 +62,7 @@ const getPost=async ()=>{
 
 const handleGetProfile=async (userName)=>{
    try {
-    let result=await axios.get(serverUrl+`/api/user/profile/${userName}`,{
+    let result=await axios.get(serverUrl+`/api/v1/user/profile/${userName}`,{
       withCredentials:true
     })
     setProfileData(result.data)

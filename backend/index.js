@@ -64,7 +64,17 @@ app.use(cors({
   credentials: true,
 }));
 
-// ================== ROUTES ==================
+// ================== ROUTES (API v1) ==================
+// Versioning allows for backward compatibility if API changes
+// Future versions can run alongside v1: /api/v2/auth, etc.
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/post", postRouter);
+app.use("/api/v1/connection", connectionRouter);
+app.use("/api/v1/notification", notificationRouter);
+
+// ================== FALLBACK FOR UNVERSIONED ROUTES ==================
+// Redirect old format to new versioned format for backward compatibility
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
