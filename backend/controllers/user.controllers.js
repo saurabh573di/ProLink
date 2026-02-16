@@ -109,32 +109,20 @@ export const search=async (req,res,next)=>{
         if(!query || query.trim() === ""){
             return res.status(200).json([])
         }
-        // Use text search for better performance on large datasets
-        let users=await User.find(
-            { $text: { $search: query } },
-            { score: { $meta: "textScore" } }
-        )
-        .select("firstName lastName userName profileImage headline skills")
-        .sort({ score: { $meta: "textScore" } })
-        .limit(20)
+        
+        // Use regex for partial matching - works with partial text like "joh" finds "john"
+        let users=await User.find({
+            $or:[
+                {firstName:{$regex:query,$options:"i"}},
+                {lastName:{$regex:query,$options:"i"}},
+                {userName:{$regex:query,$options:"i"}},
+                {skills:{$regex:query,$options:"i"}}
+            ]
+        }).select("firstName lastName userName profileImage headline skills").limit(20)
         
         return res.status(200).json(users)
     } catch (error) {
-        // Fallback to regex if text search fails
-        try {
-            let {query}=req.query
-            let users=await User.find({
-                $or:[
-                    {firstName:{$regex:query,$options:"i"}},
-                    {lastName:{$regex:query,$options:"i"}},
-                    {userName:{$regex:query,$options:"i"}},
-                    {skills:{$regex:query,$options:"i"}}
-                ]
-            }).select("firstName lastName userName profileImage headline skills").limit(20)
-            return res.status(200).json(users)
-        } catch (fallbackError) {
-            next(fallbackError)
-        }
+        next(error)
     }
 }
 
