@@ -98,9 +98,8 @@ const userSchema=new mongoose.Schema({
 
 },{timestamps:true})
 
-// Add indexes for performance
-userSchema.index({ userName: 1 })
-userSchema.index({ email: 1 })
+// Add full-text search index
+// Note: userName and email already have indexes from unique: true in schema
 userSchema.index({ firstName: "text", lastName: "text", userName: "text", skills: "text" })
 
 const User=mongoose.model("User",userSchema)
