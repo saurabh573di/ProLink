@@ -47,7 +47,7 @@ import Post from "../models/post.model.js"
 import uploadOnCloudinary from "../config/cloudinary.js"
 import { io } from "../index.js";
 import Notification from "../models/notification.model.js";
-export const createPost=async (req,res)=>{
+export const createPost=async (req,res,next)=>{
     try {
         let {description}=req.body
         let newPost;
@@ -67,13 +67,12 @@ export const createPost=async (req,res)=>{
 return res.status(201).json(newPost)
 
     } catch (error) {
-        console.log("Create post error:", error)
-        return res.status(500).json({message:`create post error ${error.message}`})
+        next(error)
     }
 }
 
 
-export const getPost=async (req,res)=>{
+export const getPost=async (req,res,next)=>{
     try {
         const page = req.query.page ? parseInt(req.query.page) : 0
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
@@ -95,11 +94,11 @@ export const getPost=async (req,res)=>{
             pages: Math.ceil(total / limit)
         })
     } catch (error) {
-        return res.status(500).json({message:"getPost error"})
+        next(error)
     }
 }
 
-export const like =async (req,res)=>{
+export const like =async (req,res,next)=>{
     try {
         let postId=req.params.id
         let userId=req.userId
@@ -164,7 +163,7 @@ export const like =async (req,res)=>{
     }
 }
 
-export const comment=async (req,res)=>{
+export const comment=async (req,res,next)=>{
     try {
         let postId=req.params.id
         let userId=req.userId
@@ -186,6 +185,6 @@ export const comment=async (req,res)=>{
         return res.status(200).json(post)
 
     } catch (error) {
-        return res.status(500).json({message:`comment error ${error}`})  
+        next(error)  
     }
 }

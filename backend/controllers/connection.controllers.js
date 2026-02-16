@@ -65,7 +65,7 @@ import Connection from "../models/connection.model.js"
 import User from "../models/user.model.js"
 import {io,userSocketMap} from "../index.js"
 import Notification from "../models/notification.model.js"
-export const sendConnection= async (req,res)=>{
+export const sendConnection= async (req,res,next)=>{
     try {
         let {id}=req.params
         let sender=req.userId
@@ -110,11 +110,11 @@ if(senderSocketId){
 
     } 
     catch (error) {
-      return res.status(500).json({message:`sendconnection error ${error}`}) 
+      next(error) 
     }
 }
 
-export const acceptConnection=async (req,res)=>{
+export const acceptConnection=async (req,res,next)=>{
     try {
         let {connectionId}=req.params
         let userId=req.userId
@@ -160,11 +160,11 @@ if(senderSocketId){
 
 
     } catch (error) {
-        return res.status(500).json({message:`connection accepted error ${error}`})
+        next(error)
     }
 }
 
-export const rejectConnection=async (req,res)=>{
+export const rejectConnection=async (req,res,next)=>{
     try {
         let {connectionId}=req.params
         let connection=await Connection.findById(connectionId)
@@ -183,10 +183,10 @@ export const rejectConnection=async (req,res)=>{
 
 
     } catch (error) {
-        return res.status(500).json({message:`connection rejected error ${error}`})
+        next(error)
     }
 }
-export const getConnectionStatus = async (req, res) => {
+export const getConnectionStatus = async (req, res, next) => {
 	try {
 		const targetUserId = req.params.userId;
 		const currentUserId = req.userId;
@@ -215,12 +215,12 @@ export const getConnectionStatus = async (req, res) => {
 		// if no connection or pending req found
 		return res.json({ status: "Connect" });
 	} catch (error) {
-		return res.status(500).json({ message: "getConnectionStatus error" });
+		next(error);
 	}
 };
 
 
-export const removeConnection = async (req, res) => {
+export const removeConnection = async (req, res, next) => {
 	try {
 		const myId = req.userId;
 		const otherUserId = req.params.userId;
@@ -241,13 +241,12 @@ if(senderSocketId){
 
 		return res.json({ message: "Connection removed successfully" });
 	} catch (error) {
-        console.log(error)
-		return res.status(500).json({ message: "removeConnection error" });
+        next(error)
 	}
 };
 
 
-export const getConnectionRequests = async (req, res) => {
+export const getConnectionRequests = async (req, res, next) => {
 	try {
 		const userId = req.userId;
 
@@ -256,13 +255,12 @@ export const getConnectionRequests = async (req, res) => {
 
 		return res.status(200).json(requests);
 	} catch (error) {
-		console.error("Error in getConnectionRequests controller:", error);
-		return res.status(500).json({ message: "Server error" });
+		next(error);
 	}
 };
 
 
-export const getUserConnections = async (req, res) => {
+export const getUserConnections = async (req, res, next) => {
 	try {
 		const userId = req.userId;
 
@@ -273,7 +271,6 @@ export const getUserConnections = async (req, res) => {
 
 		return res.status(200).json(user.connection);
 	} catch (error) {
-		console.error("Error in getUserConnections controller:", error);
-		return res.status(500).json({ message: "Server error" });
+		next(error);
 	}
 };

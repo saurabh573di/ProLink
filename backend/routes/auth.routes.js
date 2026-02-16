@@ -19,7 +19,7 @@ import { login, logOut, signUp } from "../controllers/auth.controllers.js"
 import validate from "../middlewares/validate.js"
 import { signupSchema, loginSchema } from "../validators/auth.validator.js"
 
-let authRouter = express.Router()
+const authRouter = express.Router()
 
 // POST /api/v1/auth/signup - Register new user
 // Validates: firstName, lastName, userName, email, password

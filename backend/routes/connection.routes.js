@@ -22,9 +22,9 @@ import express from "express"
 import { acceptConnection, getConnectionRequests, getConnectionStatus, getUserConnections, rejectConnection, removeConnection, sendConnection } from "../controllers/connection.controllers.js"
 import isAuth from "../middlewares/isAuth.js"
 import validate from "../middlewares/validate.js"
-import { sendConnectionSchema, updateConnectionSchema, getStatusSchema } from "../validators/connection.validator.js"
+import { sendConnectionSchema, updateConnectionSchema, getStatusSchema, removeConnectionSchema } from "../validators/connection.validator.js"
 
-let connectionRouter = express.Router()
+const connectionRouter = express.Router()
 
 // POST /api/v1/connection/send/:userId - Send connection request
 // Validates: userId parameter (valid MongoDB ObjectId)
@@ -43,7 +43,7 @@ connectionRouter.put("/reject/:connectionId", isAuth, validate(updateConnectionS
 connectionRouter.get("/getstatus/:userId", isAuth, validate(getStatusSchema, 'params'), getConnectionStatus)
 
 // DELETE /api/v1/connection/remove/:userId - Remove/disconnect from user
-connectionRouter.delete("/remove/:userId", isAuth, removeConnection)
+connectionRouter.delete("/remove/:userId", isAuth, validate(removeConnectionSchema, 'params'), removeConnection)
 
 // GET /api/v1/connection/requests - Get all pending connection requests
 connectionRouter.get("/requests", isAuth, getConnectionRequests)

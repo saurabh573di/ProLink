@@ -21,6 +21,7 @@ import Joi from "joi";
 // Signup validation schema
 export const signupSchema = Joi.object({
   firstName: Joi.string()
+    .trim()
     .min(2)
     .max(50)
     .required()
@@ -30,6 +31,7 @@ export const signupSchema = Joi.object({
       "string.max": "First name must not exceed 50 characters",
     }),
   lastName: Joi.string()
+    .trim()
     .min(2)
     .max(50)
     .required()
@@ -39,6 +41,7 @@ export const signupSchema = Joi.object({
       "string.max": "Last name must not exceed 50 characters",
     }),
   userName: Joi.string()
+    .trim()
     .alphanum()
     .min(3)
     .max(30)
@@ -51,6 +54,7 @@ export const signupSchema = Joi.object({
       "string.pattern.base": "Username can only contain letters, numbers, dots, dashes, and underscores",
     }),
   email: Joi.string()
+    .trim()
     .email()
     .required()
     .messages({
@@ -58,6 +62,7 @@ export const signupSchema = Joi.object({
       "string.email": "Email must be a valid email address",
     }),
   password: Joi.string()
+    .trim()
     .min(8)
     .max(100)
     .required()
@@ -71,6 +76,7 @@ export const signupSchema = Joi.object({
 // Login validation schema
 export const loginSchema = Joi.object({
   email: Joi.string()
+    .trim()
     .email()
     .required()
     .messages({
@@ -78,6 +84,7 @@ export const loginSchema = Joi.object({
       "string.email": "Email must be a valid email address",
     }),
   password: Joi.string()
+    .trim()
     .required()
     .messages({
       "string.empty": "Password is required",

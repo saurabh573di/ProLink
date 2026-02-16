@@ -21,6 +21,7 @@ import Joi from "joi";
 // Update profile validation schema
 export const updateProfileSchema = Joi.object({
   firstName: Joi.string()
+    .trim()
     .min(2)
     .max(50)
     .optional()
@@ -29,6 +30,7 @@ export const updateProfileSchema = Joi.object({
       "string.max": "First name must not exceed 50 characters",
     }),
   lastName: Joi.string()
+    .trim()
     .min(2)
     .max(50)
     .optional()
@@ -37,18 +39,21 @@ export const updateProfileSchema = Joi.object({
       "string.max": "Last name must not exceed 50 characters",
     }),
   headline: Joi.string()
+    .trim()
     .max(160)
     .optional()
     .messages({
       "string.max": "Headline must not exceed 160 characters",
     }),
   location: Joi.string()
+    .trim()
     .max(100)
     .optional()
     .messages({
       "string.max": "Location must not exceed 100 characters",
     }),
   gender: Joi.string()
+    .trim()
     .valid("male", "female", "other")
     .optional()
     .messages({
@@ -99,5 +104,19 @@ export const searchSchema = Joi.object({
       "string.empty": "Search query is required",
       "string.min": "Search query must be at least 1 character",
       "string.max": "Search query must not exceed 100 characters",
+    }),
+});
+
+// Get profile validation schema (userName parameter)
+export const getProfileSchema = Joi.object({
+  userName: Joi.string()
+    .trim()
+    .min(1)
+    .max(30)
+    .required()
+    .messages({
+      "string.empty": "Username is required",
+      "string.min": "Username must be at least 1 character",
+      "string.max": "Username must not exceed 30 characters",
     }),
 });

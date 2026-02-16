@@ -43,7 +43,7 @@
 import uploadOnCloudinary from "../config/cloudinary.js"
 import User from "../models/user.model.js"
 
-export const getCurrentUser=async (req,res)=>{
+export const getCurrentUser=async (req,res,next)=>{
     try {
         let id=req.userId  
         const user=await User.findById(id).select("-password")
@@ -53,14 +53,12 @@ export const getCurrentUser=async (req,res)=>{
 
         return res.status(200).json(user)
     } catch (error) {
-        console.log(error);
-        
-        return res.status(400).json({message:"get current user error"})
+        next(error)
     }
 }
 
 
-export const updateProfile=async (req,res)=>{
+export const updateProfile=async (req,res,next)=>{
     try {
        let {firstName,lastName,userName,headline,location,gender} =req.body
        let skills=req.body.skills?JSON.parse(req.body.skills):[]
@@ -82,13 +80,12 @@ export const updateProfile=async (req,res)=>{
        return res.status(200).json(user)
 
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({message:`update profile error ${error}`})
+        next(error)
     }
 }
 
 
-export const getprofile=async (req,res)=>{
+export const getprofile=async (req,res,next)=>{
     try {
         let {userName}=req.params
         // Case-insensitive search using regex to handle existing users with spaces (e.g. "Mobile D")
@@ -102,12 +99,11 @@ export const getprofile=async (req,res)=>{
         }
         return res.status(200).json(user)
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({message:`get profile error ${error}`})
+        next(error)
     }
 }
 
-export const search=async (req,res)=>{
+export const search=async (req,res,next)=>{
     try {
         let {query}=req.query
         if(!query || query.trim() === ""){
@@ -137,13 +133,12 @@ export const search=async (req,res)=>{
             }).select("firstName lastName userName profileImage headline skills").limit(20)
             return res.status(200).json(users)
         } catch (fallbackError) {
-            console.log(fallbackError)
-            return res.status(500).json({message:`search error ${fallbackError}`})
+            next(fallbackError)
         }
     }
 }
 
-export const getSuggestedUser=async (req,res)=>{
+export const getSuggestedUser=async (req,res,next)=>{
     try {
         let currentUser=await User.findById(req.userId).select("connection")
 
@@ -158,7 +153,6 @@ export const getSuggestedUser=async (req,res)=>{
         return res.status(200).json(suggestedUsers)
 
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({message:`suggestedUser error ${error}`})
+        next(error)
     }
 }

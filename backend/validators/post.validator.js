@@ -23,6 +23,7 @@ import Joi from "joi";
 // Create post validation schema
 export const createPostSchema = Joi.object({
   description: Joi.string()
+    .trim()
     .max(5000)
     .optional()
     .messages({
@@ -70,5 +71,18 @@ export const getPostSchema = Joi.object({
       "number.base": "Limit must be a number",
       "number.min": "Limit must be at least 1",
       "number.max": "Limit must not exceed 100",
+    }),
+});
+
+// Like/unlike post validation schema
+export const likePostSchema = Joi.object({
+  id: Joi.string()
+    .trim()
+    .length(24) // MongoDB ObjectId length
+    .hex()
+    .required()
+    .messages({
+      "string.empty": "Post ID is required",
+      "string.length": "Invalid post ID format",
     }),
 });

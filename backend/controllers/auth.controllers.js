@@ -34,14 +34,12 @@
 import genToken from "../config/token.js"
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
-export const signUp=async (req,res)=>{
+export const signUp=async (req,res,next)=>{
     try {
         const {firstName,lastName,userName,email,password}=req.body
         
-        // Validate userName: no spaces, only alphanumeric, dots, dashes, underscores
-        if(!userName || !/^[a-zA-Z0-9._-]+$/.test(userName)){
-            return res.status(400).json({message:"Username can only contain letters, numbers, dots, dashes, and underscores (no spaces)"})
-        }
+        // Normalize username to lowercase
+        const normalizedUserName = userName.toLowerCase().trim()
         
         // Check if email exists
        let existEmail=await User.findOne({email})
@@ -49,14 +47,10 @@ export const signUp=async (req,res)=>{
         return res.status(400).json({message:"email already exist !"})
        }
        
-       // Normalize and check username
-       const normalizedUserName = userName.toLowerCase().trim()
+       // Check if username exists
        let existUsername=await User.findOne({userName: normalizedUserName})
        if(existUsername){
         return res.status(400).json({message:"userName already exist !"})
-       }
-       if(password.length<8){
-        return res.status(400).json({message:"password must be at least 8 characters"})
        }
        
        // Use normalized username
@@ -78,16 +72,16 @@ export const signUp=async (req,res)=>{
         path: "/"
        })
        
-      return res.status(201).json(user)
+      // Exclude password from response
+      const { password: _, ...userWithoutPassword } = user.toObject()
+      return res.status(201).json(userWithoutPassword)
 
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({message:"signup error"})
-   
+        next(error)
     }
 }
 
-export const login=async (req,res)=>{
+export const login=async (req,res,next)=>{
     try {
         const {email,password}=req.body
         let user=await User.findOne({email})
@@ -108,14 +102,15 @@ export const login=async (req,res)=>{
          secure: process.env.NODE_ENV === "production",
          path: "/"
         })
-       return res.status(200).json(user)
+       // Exclude password from response
+       const { password: pwd, ...userWithoutPassword } = user.toObject()
+       return res.status(200).json(userWithoutPassword)
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({message:"login error"})
+        next(error)
     }
 }
 
-export const logOut=async (req,res)=>{
+export const logOut=async (req,res,next)=>{
     try {
         res.clearCookie("token", {
             httpOnly: true,
@@ -125,7 +120,6 @@ export const logOut=async (req,res)=>{
         })
         return res.status(200).json({message:"log out successfully"})
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({message:"logout error"})
+        next(error)
     }
 }

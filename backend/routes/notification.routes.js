@@ -20,7 +20,7 @@ import { clearAllNotification, deleteNotification, getNotifications } from "../c
 import validate from "../middlewares/validate.js"
 import { deleteNotificationSchema } from "../validators/notification.validator.js"
 
-let notificationRouter = express.Router()
+const notificationRouter = express.Router()
 
 // GET /api/v1/notification/get - Get all notifications for user
 notificationRouter.get("/get", isAuth, getNotifications)

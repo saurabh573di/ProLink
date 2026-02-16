@@ -29,16 +29,17 @@
 export { signupSchema, loginSchema } from "./auth.validator.js";
 
 // User validators
-export { updateProfileSchema, searchSchema } from "./user.validator.js";
+export { updateProfileSchema, searchSchema, getProfileSchema } from "./user.validator.js";
 
 // Post validators
-export { createPostSchema, commentSchema, getPostSchema } from "./post.validator.js";
+export { createPostSchema, commentSchema, getPostSchema, likePostSchema } from "./post.validator.js";
 
 // Connection validators
 export {
   sendConnectionSchema,
   updateConnectionSchema,
   getStatusSchema,
+  removeConnectionSchema,
 } from "./connection.validator.js";
 
 // Notification validators

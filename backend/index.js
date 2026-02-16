@@ -34,6 +34,7 @@ import { Server } from "socket.io";
 import notificationRouter from "./routes/notification.routes.js";
 import compression from "compression";
 import helmet from "helmet";
+import { errorHandler } from "./middlewares/errorHandler.js";
 
 dotenv.config();
 
@@ -80,6 +81,11 @@ app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/connection", connectionRouter);
 app.use("/api/notification", notificationRouter);
+
+// ================== ERROR HANDLER MIDDLEWARE ==================
+// IMPORTANT: Must be placed AFTER all routes and BEFORE app.listen
+// This middleware catches all errors passed via next(error) in try-catch blocks
+app.use(errorHandler);
 
 // ================== SOCKET.IO EVENTS ==================
 

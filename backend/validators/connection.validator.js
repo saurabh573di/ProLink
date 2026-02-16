@@ -23,6 +23,7 @@ import Joi from "joi";
 // Send connection validation schema
 export const sendConnectionSchema = Joi.object({
   id: Joi.string()
+    .trim()
     .length(24) // MongoDB ObjectId length
     .hex()
     .required()
@@ -35,6 +36,7 @@ export const sendConnectionSchema = Joi.object({
 // Update connection validation schema (accept/reject)
 export const updateConnectionSchema = Joi.object({
   connectionId: Joi.string()
+    .trim()
     .length(24)
     .hex()
     .required()
@@ -47,6 +49,20 @@ export const updateConnectionSchema = Joi.object({
 // Get connection status validation schema
 export const getStatusSchema = Joi.object({
   userId: Joi.string()
+    .trim()
+    .length(24)
+    .hex()
+    .required()
+    .messages({
+      "string.empty": "User ID is required",
+      "string.length": "Invalid user ID format",
+    }),
+});
+
+// Remove connection validation schema  
+export const removeConnectionSchema = Joi.object({
+  userId: Joi.string()
+    .trim()
     .length(24)
     .hex()
     .required()

@@ -20,7 +20,7 @@ import isAuth from "../middlewares/isAuth.js"
 import upload from "../middlewares/multer.js"
 import { comment, createPost, getPost, like } from "../controllers/post.Controllers.js"
 import validate from "../middlewares/validate.js"
-import { createPostSchema, getPostSchema, commentSchema } from "../validators/post.validator.js"
+import { createPostSchema, getPostSchema, commentSchema, likePostSchema } from "../validators/post.validator.js"
 
 const postRouter = express.Router()
 
@@ -33,7 +33,7 @@ postRouter.post("/create", isAuth, upload.single("image"), validate(createPostSc
 postRouter.get("/getpost", isAuth, validate(getPostSchema, 'query'), getPost)
 
 // GET /api/v1/post/like/:postId - Toggle like on post
-postRouter.get("/like/:id", isAuth, like)
+postRouter.get("/like/:id", isAuth, validate(likePostSchema, 'params'), like)
 
 // POST /api/v1/post/comment/:postId - Add comment to post
 // Validates: content (required, 1-1000 characters)

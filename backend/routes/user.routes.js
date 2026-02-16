@@ -20,9 +20,9 @@ import { getCurrentUser, getprofile, getSuggestedUser, search, updateProfile } f
 import isAuth from "../middlewares/isAuth.js"
 import upload from "../middlewares/multer.js"
 import validate from "../middlewares/validate.js"
-import { updateProfileSchema, searchSchema } from "../validators/user.validator.js"
+import { updateProfileSchema, searchSchema, getProfileSchema } from "../validators/user.validator.js"
 
-let userRouter = express.Router()
+const userRouter = express.Router()
 
 // GET /api/v1/user/currentuser - Get logged-in user's profile
 userRouter.get("/currentuser", isAuth, getCurrentUser)
@@ -35,7 +35,7 @@ userRouter.put("/updateprofile", isAuth, upload.fields([
 ]), validate(updateProfileSchema), updateProfile)
 
 // GET /api/v1/user/profile/:userName - Get specific user's profile
-userRouter.get("/profile/:userName", isAuth, getprofile)
+userRouter.get("/profile/:userName", isAuth, validate(getProfileSchema, 'params'), getprofile)
 
 // GET /api/v1/user/search?query= - Search users by name/skills
 // Validates: query parameter (min 1, max 100 characters)

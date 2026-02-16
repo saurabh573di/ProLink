@@ -39,7 +39,7 @@
 */
 import Notification from "../models/notification.model.js"
 
-export const getNotifications=async (req,res)=>{
+export const getNotifications=async (req,res,next)=>{
     try {
         
     let notification=await Notification.find({receiver:req.userId})
@@ -48,10 +48,10 @@ export const getNotifications=async (req,res)=>{
     .populate("relatedPost","image description")
     return res.status(200).json(notification)
     } catch (error) {
-        return res.status(500).json({message:`get notification error ${error}`})
+        next(error)
     }
 }
-export const deleteNotification=async (req,res)=>{
+export const deleteNotification=async (req,res,next)=>{
     try {
         let {id}=req.params
    await Notification.findOneAndDelete({
@@ -60,16 +60,16 @@ export const deleteNotification=async (req,res)=>{
    })
     return res.status(200).json({message:" notification deleted successfully"})
     } catch (error) {
-        return res.status(500).json({message:`delete notification error ${error}`})
+        next(error)
     }
 }
-export const clearAllNotification=async (req,res)=>{
+export const clearAllNotification=async (req,res,next)=>{
     try {
    await Notification.deleteMany({
     receiver:req.userId
    })
     return res.status(200).json({message:" notification deleted successfully"})
     } catch (error) {
-        return res.status(500).json({message:`delete all notification error ${error}`})
+        next(error)
     }
 }
