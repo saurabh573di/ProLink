@@ -78,14 +78,16 @@ export const getPost=async (req,res,next)=>{
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         const skip = page * limit
 
-        const post=await Post.find()
-        .populate("author","firstName lastName profileImage headline userName")
-        .populate("comment.user","firstName lastName profileImage headline")
-        .sort({createdAt:-1})
-        .limit(limit)
-        .skip(skip)
-        
-        const total = await Post.countDocuments()
+        // OPTIMIZATION: Use parallel queries to reduce total response time
+        const [post, total] = await Promise.all([
+            Post.find()
+            .populate("author","firstName lastName profileImage headline userName")
+            .populate("comment.user","firstName lastName profileImage headline")
+            .sort({createdAt:-1})
+            .limit(limit)
+            .skip(skip),
+            Post.countDocuments()
+        ])
         
         return res.status(200).json({
             posts: post,
