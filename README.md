@@ -804,7 +804,7 @@ NODE_ENV=development
 # For production: NODE_ENV=production
 
 # Database
-MONGODB_URL=mongodb+srv://username:password@cluster0.mongodb.net/prolink?retryWrites=true&w=majority
+MONGODB_URL= you mongob url
 # Local MongoDB: mongodb://localhost:27017/prolink
 
 # JWT Configuration
