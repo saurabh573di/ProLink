@@ -33,7 +33,7 @@ function Signup() {
     
     setLoading(true)
     try {
-      let result = await axios.post(serverUrl+"/api/auth/signup",{
+      let result = await axios.post(serverUrl+"/api/v1/auth/signup",{
 firstName,
 lastName,
 userName,

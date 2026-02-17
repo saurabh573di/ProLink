@@ -17,7 +17,7 @@ let [notificationData,setNotificationData]=useState([])
 let {userData}=useContext(userDataContext)
 const handleGetNotification=async ()=>{
     try {
-        let result=await axios.get(serverUrl+"/api/notification/get",{withCredentials:true})
+        let result=await axios.get(serverUrl+"/api/v1/notification/get",{withCredentials:true})
         setNotificationData(result.data)
     } catch (error) {
         console.log(error)
@@ -33,7 +33,7 @@ const handledeleteNotification=async (id)=>{
 }
 const handleClearAllNotification=async ()=>{
     try {
-        let result=await axios.delete(serverUrl+"/api/notification",{withCredentials:true})
+        let result=await axios.delete(serverUrl+"/api/v1/notification",{withCredentials:true})
         await handleGetNotification()
     } catch (error) {
         console.log(error)

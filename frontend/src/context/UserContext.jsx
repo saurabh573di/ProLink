@@ -24,6 +24,7 @@ let socket;
 
 function UserContext({children}) {
 let [userData,setUserData]=useState(null)
+let [isInitializing, setIsInitializing] = useState(true) // Track auth loading state
 let {serverUrl}=useContext(authDataContext)
 let [edit,setEdit]=useState(false)
 let [postData,setPostData]=useState([])
@@ -41,10 +42,11 @@ const getCurrentUser=async ()=>{
     try {
         let result=await axios.get(serverUrl+"/api/v1/user/currentuser",{withCredentials:true})
         setUserData(result.data)
-        return
+        return true
     } catch (error) {
         console.log(error);
         setUserData(null)
+        return false
     }
 }
 
@@ -86,18 +88,27 @@ const handleGetProfile=async (userName)=>{
 
 
 useEffect(() => {
-  // OPTIMIZATION: Skip getCurrentUser() if userData is already set to avoid duplicate API calls
-  // userData is populated immediately after login, so only fetch if it's not set
-  if (!userData) {
-    getCurrentUser();
+  // Check authentication status on app load/refresh
+  const checkAuth = async () => {
+    setIsInitializing(true)
+    
+    // Only call getCurrentUser if not already set
+    if (!userData) {
+      await getCurrentUser();
+    }
+    
+    // Fetch posts in background
+    getPost()
+    
+    setIsInitializing(false)
   }
-  // Fetch posts on mount - parallelize to reduce total load time
-  getPost()
+  
+  checkAuth()
 }, []);
 
 
     const value={
-        userData,setUserData,edit,setEdit,postData,setPostData,getPost,handleGetProfile,profileData,setProfileData,socket
+        userData,setUserData,edit,setEdit,postData,setPostData,getPost,handleGetProfile,profileData,setProfileData,socket,isInitializing
     }
   return (
     <div>

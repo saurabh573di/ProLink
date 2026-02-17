@@ -56,7 +56,7 @@ async function handleUploadPost(){
     if(backendImage){
       formdata.append("image",backendImage)
     }
-let result=await axios.post(serverUrl+"/api/post/create",formdata,{withCredentials:true})
+let result=await axios.post(serverUrl+"/api/v1/post/create",formdata,{withCredentials:true})
 console.log(result)
 setPosting(false)
 setUploadPost(false)
@@ -68,7 +68,7 @@ setUploadPost(false)
 }
 const handleSuggestedUsers=async ()=>{
   try {
-    let result=await axios.get(serverUrl+"/api/user/suggestedusers",{withCredentials:true})
+    let result=await axios.get(serverUrl+"/api/v1/user/suggestedusers",{withCredentials:true})
     console.log(result.data)
     // IMPORTANT: Ensure suggestedUser is always an array to prevent ".map is not a function" errors
     setSuggestedUser(Array.isArray(result.data) ? result.data : result.data?.users || [])

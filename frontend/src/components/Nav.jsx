@@ -25,7 +25,7 @@ let [searchInput,setSearchInput]=useState("")
 let [searchData,setSearchData]=useState([])
 const handleSignOut=async ()=>{
     try {
-        let result =await axios.get(serverUrl+"/api/auth/logout",{withCredentials:true})
+        let result =await axios.get(serverUrl+"/api/v1/auth/logout",{withCredentials:true})
         setUserData(null)
         navigate("/login")
       

@@ -34,8 +34,18 @@ const Notification = lazy(() => import('./pages/Notification'))
 import { userDataContext } from './context/UserContext'
 
 function App() {
-  // Get user data from context - null means not logged in
-  let {userData}=useContext(userDataContext)
+  // Get user data and initializing state from context
+  let {userData, isInitializing}=useContext(userDataContext)
+  
+  // Show loading screen while checking authentication status
+  if (isInitializing) {
+    return (
+      <div className='w-full h-screen flex items-center justify-center bg-[#f0efe7]'>
+        <div className='text-gray-600 text-lg'>Loading...</div>
+      </div>
+    )
+  }
+  
   return (
    <Routes>
     <Route path='/' element={userData?<Home/>:<Navigate to="/login"/>}/>
