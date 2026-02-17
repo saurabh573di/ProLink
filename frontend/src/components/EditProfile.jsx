@@ -326,8 +326,3 @@ const closeModal = () => {
 }
 
 export default EditProfile
-
-  )
-}
-
-export default EditProfile
