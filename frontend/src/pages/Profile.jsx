@@ -3,8 +3,10 @@
     - Displays a user's public profile including posts, skills, education and experience.
     - If viewing your own profile (`profileData._id === userData._id`) you can edit it via `EditProfile`.
     - `profilePost` is derived from global `postData` and filtered by the profile owner's id.
+    - Fetches profile data based on username from URL params or shows current user's profile.
 */
 import React, { useContext, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import Nav from '../components/Nav'
 import dp from "../assets/dp.webp"
 import { FiPlus } from "react-icons/fi";
@@ -16,18 +18,69 @@ import axios from 'axios';
 import EditProfile from '../components/EditProfile';
 import Post from '../components/Post';
 import ConnectionButton from '../components/ConnectionButton';
-function Profile() {
 
+function Profile() {
     let {userData,setUserData,edit,setEdit,postData,setPostData,profileData,setProfileData}=useContext(userDataContext)
+    let { username } = useParams()
     // Local state for posts authored by the profile being viewed
     let [profilePost,setProfilePost]=useState([])
+    let [loading, setLoading] = useState(true)
     
 let {serverUrl}=useContext(authDataContext)
+
+// Fetch profile on component mount or when username changes
+useEffect(() => {
+  const fetchProfile = async () => {
+    setLoading(true)
+    try {
+      if (username) {
+        // Fetch specific user's profile by username from URL param
+        let result = await axios.get(serverUrl + "/api/v1/user/profile/" + username, {
+          withCredentials: true
+        })
+        setProfileData(result.data)
+      } else {
+        // No username provided, fetch current user's profile
+        let result = await axios.get(serverUrl + "/api/v1/user/profile/" + userData?.userName, {
+          withCredentials: true
+        })
+        setProfileData(result.data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch profile:', error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchProfile()
+}, [username, userData?.userName, serverUrl])
    
 // Recompute the posts for this profile whenever `profileData` or `postData` change
 useEffect(()=>{
-    setProfilePost(postData.filter((post)=>post.author._id.toString()===profileData._id.toString()))
+    setProfilePost(postData?.filter((post)=>post.author._id?.toString()===profileData?._id?.toString()))
 },[profileData, postData])
+
+  // Show loading state while fetching
+  if (loading) {
+    return (
+      <div className='w-full min-h-[100vh] bg-[#f0efe7] flex flex-col items-center justify-center'>
+        <div className='text-gray-600 text-lg'>Loading profile...</div>
+      </div>
+    )
+  }
+
+  // Show error if profile failed to load
+  if (!profileData?._id) {
+    return (
+      <div className='w-full min-h-[100vh] bg-[#f0efe7] flex flex-col items-center pt-[120px]'>
+        <Nav/>
+        <div className='text-center text-gray-600'>
+          <h2 className='text-lg font-semibold'>Profile not found</h2>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className='w-full min-h-[100vh] bg-[#f0efe7] flex flex-col items-center pt-[120px] pb-[40px]'>
@@ -39,7 +92,7 @@ useEffect(()=>{
         <div className='relative bg-white rounded-lg shadow-lg overflow-hidden'>
             {/* Cover Image */}
             <div className='w-full h-[120px] bg-gradient-to-r from-blue-400 to-blue-300 overflow-hidden'>
-              <img src={profileData.coverImage || ""} alt="" className='w-full h-full object-cover'/>
+              <img src={profileData.coverImage } alt="" className='w-full h-full object-cover'/>
             </div>
 
             {/* Profile Info */}
@@ -47,7 +100,7 @@ useEffect(()=>{
               {/* Profile Picture */}
               <div className='flex items-end gap-[20px] -mt-[55px] mb-[15px]'>
                 <div className='w-[100px] h-[100px] rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg flex items-center justify-center'>
-                  <img src={profileData.profileImage || dp} alt="" className='w-full h-full object-cover' loading="lazy" onError={(e) => e.target.src = dp}/>
+                  <img src={profileData.profileImage || dp} alt="Profile" className='w-full h-full object-cover' onError={(e) => e.target.src = dp}/>
                 </div>
                 <div className='pb-[10px]'>
                   <h1 className='text-[28px] font-bold text-gray-900'>{`${profileData.firstName} ${profileData.lastName}`}</h1>
@@ -58,18 +111,18 @@ useEffect(()=>{
               {/* Location & Connections */}
               <div className='flex gap-[30px] mb-[15px] text-[14px] text-gray-600'>
                 {profileData.location && <span>{profileData.location}</span>}
-                <span className='font-semibold text-gray-900'>{profileData.connection.length} {profileData.connection.length === 1 ? 'connection' : 'connections'}</span>
+                <span className='font-semibold text-gray-900'>{profileData?.connection?.length} {profileData?.connection?.length === 1 ? 'connection' : 'connections'}</span>
               </div>
 
               {/* Action Buttons */}
               <div className='flex gap-[10px] pb-[20px]'>
-                {profileData._id==userData._id && (
+                {profileData._id && profileData._id===userData._id && (
                   <button className='px-[24px] py-[10px] rounded-full bg-blue-600 text-white font-semibold text-[15px] hover:bg-blue-700 transition-all flex items-center gap-[8px]' onClick={()=>setEdit(true)}>
                     <HiPencil className='w-[18px] h-[18px]' />
                     Edit Profile
                   </button>
                 )}
-                {profileData._id!=userData._id && <div className="touch-manipulation"><ConnectionButton userId={profileData._id}/></div>}
+                {profileData._id && profileData._id!==userData._id && <div className="touch-manipulation"><ConnectionButton userId={profileData._id}/></div>}
               </div>
             </div>
         </div>
@@ -80,10 +133,10 @@ useEffect(()=>{
 {profilePost.map((post,index)=>(
     <Post key={index} id={post._id} description={post.description} author={post.author} image={post.image} like={post.like} comment={post.comment} createdAt={post.createdAt}/>
 ))}
-{profileData.skills.length>0 && <div className='w-full bg-white shadow-lg rounded-lg overflow-hidden'>
+{profileData?.skills?.length>0 && <div className='w-full bg-white shadow-lg rounded-lg overflow-hidden'>
     <div className='px-[20px] pt-[20px] pb-[15px] border-b border-gray-200 flex justify-between items-center'>
       <h2 className='text-[22px] font-bold text-gray-900'>Skills</h2>
-      {profileData._id==userData._id && <button onClick={()=>setEdit(true)} className='h-[40px] px-[16px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] font-semibold hover:bg-blue-50 transition-all'>+ Add</button>}
+      {profileData._id && profileData._id===userData._id && <button onClick={()=>setEdit(true)} className='h-[40px] px-[16px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] font-semibold hover:bg-blue-50 transition-all'>+ Add</button>}
     </div>
     <div className='p-[20px] flex flex-wrap gap-[10px]'>
       {profileData.skills.map((skill, index)=>(
@@ -91,10 +144,10 @@ useEffect(()=>{
       ))}
     </div>
   </div>}
-{profileData.education.length>0 && <div className='w-full bg-white shadow-lg rounded-lg overflow-hidden'>
+{profileData?.education?.length>0 && <div className='w-full bg-white shadow-lg rounded-lg overflow-hidden'>
     <div className='px-[20px] pt-[20px] pb-[15px] border-b border-gray-200 flex justify-between items-center'>
       <h2 className='text-[22px] font-bold text-gray-900'>Education</h2>
-      {profileData._id==userData._id && <button onClick={()=>setEdit(true)} className='h-[40px] px-[16px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] font-semibold hover:bg-blue-50 transition-all'>+ Add</button>}
+      {profileData._id && profileData._id===userData._id && <button onClick={()=>setEdit(true)} className='h-[40px] px-[16px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] font-semibold hover:bg-blue-50 transition-all'>+ Add</button>}
     </div>
     <div className='divide-y divide-gray-200'>
       {profileData.education.map((edu, index)=>(
@@ -106,10 +159,10 @@ useEffect(()=>{
       ))}
     </div>
   </div>}
-{profileData.experience.length>0 && <div className='w-full bg-white shadow-lg rounded-lg overflow-hidden'>
+{profileData?.experience?.length>0 && <div className='w-full bg-white shadow-lg rounded-lg overflow-hidden'>
     <div className='px-[20px] pt-[20px] pb-[15px] border-b border-gray-200 flex justify-between items-center'>
       <h2 className='text-[22px] font-bold text-gray-900'>Experience</h2>
-      {profileData._id==userData._id && <button onClick={()=>setEdit(true)} className='h-[40px] px-[16px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] font-semibold hover:bg-blue-50 transition-all'>+ Add</button>}
+      {profileData._id && profileData._id===userData._id && <button onClick={()=>setEdit(true)} className='h-[40px] px-[16px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] text-[14px] font-semibold hover:bg-blue-50 transition-all'>+ Add</button>}
     </div>
     <div className='divide-y divide-gray-200'>
       {profileData.experience.map((ex, index)=>(

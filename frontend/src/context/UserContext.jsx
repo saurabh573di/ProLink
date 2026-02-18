@@ -28,7 +28,7 @@ let [isInitializing, setIsInitializing] = useState(true) // Track auth loading s
 let {serverUrl}=useContext(authDataContext)
 let [edit,setEdit]=useState(false)
 let [postData,setPostData]=useState([])
-let [profileData,setProfileData]=useState([])
+let [profileData,setProfileData]=useState({}) // Initialize as object, not array
 let navigate=useNavigate()
 
 // Initialize socket once when serverUrl is available
@@ -55,7 +55,6 @@ const getPost=async ()=>{
     let result=await axios.get(serverUrl+"/api/v1/post/getpost?limit=5",{
       withCredentials:true
     })
-    console.log(result)
     // IMPORTANT: Ensure postData is always an array to prevent ".map is not a function" errors
     // If API returns { posts: [] }, extract the posts array
     setPostData(Array.isArray(result.data) ? result.data : result.data?.posts || [])
@@ -69,20 +68,10 @@ const getPost=async ()=>{
 
 const handleGetProfile=async (userName)=>{
    try {
-    let result=await axios.get(serverUrl+`/api/v1/user/profile/${userName}`,{
-      withCredentials:true
-    })
-    setProfileData(result.data)
-    navigate("/profile")
+    // Navigate to profile page with username parameter
+    navigate(`/profile/${userName}`)
    } catch (error) {
-    // Better error handling: 404 = not found, other errors = server issues
-    if(error?.response?.status === 404) {
-      console.log("User not found")
-      alert("User profile not found. Please check the username.")
-    } else {
-      console.log(error)
-      alert("Error loading profile. Please try again.")
-    }
+    console.error("Error navigating to profile:", error)
    }
 }
 

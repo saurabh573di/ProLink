@@ -17,38 +17,49 @@ let {userData,setUserData,socket}=useContext(userDataContext)
 let [status,setStatus]=useState("")
 let [showDialog,setShowDialog]=useState(false)
 let navigate=useNavigate()
+
+    // Guard: Validate userId prop
+    if (!userId || userId === 'undefined') {
+        console.warn('ConnectionButton: Invalid userId prop', userId)
+        return null
+    }
+
     const handleSendConnection=async ()=>{
         try {
-            let result=await axios.post(`${serverUrl}/api/connection/send/${userId}`,{},{withCredentials:true})
-            console.log(result)
-            
+            await axios.post(`${serverUrl}/api/connection/send/${userId}`,{},{withCredentials:true})
         } catch (error) {
-            console.log(error)
+            console.error('Failed to send connection request:', error.message)
         }
     }
     const handleRemoveConnection=async ()=>{
         try {
-            let result=await axios.delete(`${serverUrl}/api/connection/remove/${userId}`,{withCredentials:true})
-            console.log(result)
+            await axios.delete(`${serverUrl}/api/connection/remove/${userId}`,{withCredentials:true})
             setShowDialog(false)
         } catch (error) {
-            console.log(error)
+            console.error('Failed to remove connection:', error.message)
             setShowDialog(false)
         }
     }
     const handleGetStatus=async ()=>{
+        // Guard: Don't make request if userId is undefined
+        if (!userId || userId === 'undefined') {
+            console.warn('ConnectionButton: userId is undefined')
+            return
+        }
+        
         try {
             let result=await axios.get(`${serverUrl}/api/connection/getStatus/${userId}`,{withCredentials:true})
-            console.log(result)
             setStatus(result.data.status)
             
         } catch (error) {
-            console.log(error)
+            console.error('Failed to fetch connection status:', error.message)
         }
     }
 
 useEffect(()=>{
-    if(!socket) return;
+    // Guard: Don't run effect if userId or socket is not available
+    if(!userId || !socket) return;
+    
     socket.emit("register",userData._id)
     handleGetStatus()
 
