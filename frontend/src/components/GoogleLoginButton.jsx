@@ -127,8 +127,14 @@ function GoogleLoginButton() {
       console.log('Backend response:', result.data)
 
       // Store user data and redirect
-      setUserData(result.data.user)
-      navigate('/')
+      // Response is directly the user object, not wrapped in result.data.user
+      const userData = result.data
+      setUserData(userData)
+      
+      // Small delay to ensure state is updated before navigation
+      setTimeout(() => {
+        navigate('/')
+      }, 100)
     } catch (err) {
       console.error('Google login error details:', {
         status: err?.response?.status,
