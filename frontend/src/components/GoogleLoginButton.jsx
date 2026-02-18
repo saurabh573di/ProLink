@@ -89,23 +89,38 @@ function GoogleLoginButton() {
       )
       const decoded = JSON.parse(jsonPayload)
 
+      console.log('Google decoded data:', decoded)
+
+      // Ensure we have required fields
+      const firstName = decoded.given_name || decoded.name || 'User'
+      const lastName = decoded.family_name || ''
+      const email = decoded.email
+
+      if (!email) {
+        setError('Google account must have an email address')
+        return
+      }
+
       // Send to backend for authentication
       const result = await axios.post(
         serverUrl + '/api/v1/auth/google',
         {
-          firstName: decoded.given_name || 'User',
-          lastName: decoded.family_name || '',
-          email: decoded.email
+          firstName: firstName,
+          lastName: lastName,
+          email: email
         },
         { withCredentials: true }
       )
+
+      console.log('Backend response:', result.data)
 
       // Store user data and redirect
       setUserData(result.data.user)
       navigate('/')
     } catch (err) {
-      setError(err?.response?.data?.message || 'Google login failed. Please check console.')
-      console.error('Google login error:', err)
+      console.error('Google login error details:', err)
+      const errorMsg = err?.response?.data?.message || err?.response?.data || err.message || 'Google login failed'
+      setError(JSON.stringify(errorMsg))
     }
   }
 
