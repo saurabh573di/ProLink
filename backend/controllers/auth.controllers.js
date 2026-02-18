@@ -213,8 +213,11 @@ export const googleAuth = async (req, res, next) => {
     
     if (!user) {
       // Create new user with Google credentials
-      // Generate unique username from firstName + random number
-      const baseUserName = firstName.toLowerCase() + lastName.toLowerCase()
+      // Generate unique username: firstName + lastName (no spaces) + random number
+      // Remove spaces and special characters, keep only alphanumeric, dots, dashes, underscores
+      const sanitizedFirstName = firstName.toLowerCase().trim().replace(/\s+/g, '').replace(/[^a-z0-9._-]/g, '')
+      const sanitizedLastName = lastName.toLowerCase().trim().replace(/\s+/g, '').replace(/[^a-z0-9._-]/g, '')
+      const baseUserName = sanitizedFirstName + sanitizedLastName
       const randomNum = Math.floor(1000 + Math.random() * 9000)
       const userName = baseUserName + randomNum
 
