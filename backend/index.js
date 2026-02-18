@@ -81,7 +81,7 @@ app.use("/api/v1/notification", notificationRouter);
 
 // ================== FALLBACK FOR UNVERSIONED ROUTES ==================
 // Redirect old format to new versioned format for backward compatibility
-app.use("/api/auth", authRouter);
+app.use("/api/auth", authRouter);                 
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/connection", connectionRouter);

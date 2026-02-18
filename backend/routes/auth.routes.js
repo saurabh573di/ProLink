@@ -21,6 +21,9 @@ import { signupSchema, loginSchema } from "../validators/auth.validator.js"
 
 const authRouter = express.Router()
 
+
+
+
 // POST /api/v1/auth/signup - Register new user
 // Validates: firstName, lastName, userName, email, password
 authRouter.post("/signup", validate(signupSchema), signUp)
