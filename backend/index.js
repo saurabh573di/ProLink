@@ -68,6 +68,11 @@ app.use(cors({
 // ================== ROUTES (API v1) ==================
 // Versioning allows for backward compatibility if API changes
 // Future versions can run alongside v1: /api/v2/auth, etc.
+
+app.use("/check", (req, res) => {
+  res.send("👍 API is working! Welcome to the root endpoint. Sucessfully connected to the server.");
+});
+
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/post", postRouter);
