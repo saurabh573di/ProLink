@@ -2,6 +2,7 @@
   Login.jsx
   - Authentication page for existing users to sign in.
   - Uses React Hook Form for form management and validation.
+  - Includes Google OAuth login option
   - Uses `authDataContext` for server URL and `userDataContext` to store logged-in user info.
   - On success: updates global user state and navigates to the home feed.
 */
@@ -12,6 +13,7 @@ import { useNavigate } from "react-router-dom"
 import { authDataContext } from '../context/AuthContext'
 import axios from "axios"
 import { userDataContext } from '../context/UserContext'
+import GoogleLoginButton from '../components/GoogleLoginButton'
 
 function Login() {
   let [show, setShow] = useState(false)
@@ -103,6 +105,16 @@ function Login() {
           {errors.password && <p className='text-red-500 text-[12px] mt-[5px] ml-[5px]'>{errors.password.message}</p>}
         </div>
 
+        {/* Forgot Password Link */}
+        <div className='text-right'>
+          <span 
+            className='text-[#24b2ff] text-[12px] font-semibold hover:text-[#2a9bd8] cursor-pointer'
+            onClick={() => navigate("/forgot-password")}
+          >
+            Forgot Password?
+          </span>
+        </div>
+
         {/* Server Error */}
         {serverErr && <p className='text-center text-red-500 text-[14px] font-semibold'>*{serverErr}</p>}
 
@@ -114,6 +126,9 @@ function Login() {
         >
           {loading ? "Loading..." : "Sign In"}
         </button>
+
+        {/* Google Login Button */}
+        <GoogleLoginButton />
 
         {/* Signup Link */}
         <p className='text-center cursor-pointer'>

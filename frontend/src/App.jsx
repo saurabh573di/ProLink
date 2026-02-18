@@ -30,6 +30,7 @@ const Login = lazy(() => import('./pages/Login'))
 const Network = lazy(() => import('./pages/Network'))
 const Profile = lazy(() => import('./pages/Profile'))
 const Notification = lazy(() => import('./pages/Notification'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 
 import { userDataContext } from './context/UserContext'
 
@@ -51,6 +52,7 @@ function App() {
     <Route path='/' element={userData?<Home/>:<Navigate to="/login"/>}/>
     <Route path='/signup' element={userData?<Navigate to="/"/>:<Signup/>}/>
     <Route path='/login' element={userData?<Navigate to="/"/>:<Login/>}/>
+    <Route path='/forgot-password' element={userData?<Navigate to="/"/>:<ForgotPassword/>}/>
     <Route path='/network' element={userData?<Network/>:<Navigate to="/login"/>}/>
     <Route path='/profile/:username' element={userData?<Profile/>:<Navigate to="/login"/>}/>
     <Route path='/profile' element={userData?<Profile/>:<Navigate to="/login"/>}/>

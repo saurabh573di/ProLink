@@ -2,6 +2,7 @@
   Signup.jsx
   - User registration page. Collects basic user info and creates an account.
   - Uses React Hook Form for form management and validation.
+  - Includes Google OAuth signup option
   - On successful signup the user is stored in `userDataContext` and redirected to home.
 */
 import React, { useContext, useState } from 'react'
@@ -11,6 +12,7 @@ import { useNavigate } from "react-router-dom"
 import { authDataContext } from '../context/AuthContext'
 import axios from "axios"
 import { userDataContext } from '../context/UserContext'
+import GoogleLoginButton from '../components/GoogleLoginButton'
 
 function Signup() {
   let [show, setShow] = useState(false)
@@ -195,6 +197,9 @@ function Signup() {
         >
           {loading ? "Loading..." : "Sign Up"}
         </button>
+
+        {/* Google Login Button */}
+        <GoogleLoginButton />
 
         {/* Login Link */}
         <p className='text-center cursor-pointer'>

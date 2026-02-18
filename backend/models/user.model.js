@@ -94,7 +94,19 @@ const userSchema=new mongoose.Schema({
        { type:mongoose.Schema.Types.ObjectId,
         ref:"User"
        }
-    ]
+    ],
+    resetOtp:{
+        type:String,
+        default:undefined
+    },
+    otpExpires:{
+        type:Date,
+        default:undefined
+    },
+    isOtpVerified:{
+        type:Boolean,
+        default:false
+    }
 
 },{timestamps:true})
 
