@@ -91,15 +91,27 @@ function GoogleLoginButton() {
 
       console.log('Google decoded data:', decoded)
 
-      // Ensure we have required fields
-      const firstName = decoded.given_name || decoded.name || 'User'
-      const lastName = decoded.family_name || ''
+      // Extract and validate fields
+      let firstName = (decoded.given_name || decoded.name || 'User').trim()
+      let lastName = (decoded.family_name || '').trim()
       const email = decoded.email
 
+      // Validation checks
       if (!email) {
         setError('Google account must have an email address')
         return
       }
+
+      if (!firstName || firstName.length < 2) {
+        firstName = 'User'
+      }
+
+      // Backend requires lastName to be 2+ chars, so generate if missing
+      if (!lastName || lastName.length < 2) {
+        lastName = 'Account'
+      }
+
+      console.log('Sending to backend:', { firstName, lastName, email })
 
       // Send to backend for authentication
       const result = await axios.post(
@@ -118,9 +130,23 @@ function GoogleLoginButton() {
       setUserData(result.data.user)
       navigate('/')
     } catch (err) {
-      console.error('Google login error details:', err)
-      const errorMsg = err?.response?.data?.message || err?.response?.data || err.message || 'Google login failed'
-      setError(JSON.stringify(errorMsg))
+      console.error('Google login error details:', {
+        status: err?.response?.status,
+        data: err?.response?.data,
+        message: err?.message
+      })
+      
+      // Show detailed error from backend
+      let errorMsg = 'Google login failed'
+      if (err?.response?.data?.message) {
+        errorMsg = err.response.data.message
+      } else if (err?.response?.data?.error) {
+        errorMsg = err.response.data.error
+      } else if (err?.response?.data?.details) {
+        errorMsg = err.response.data.details
+      }
+      
+      setError(errorMsg)
     }
   }
 
